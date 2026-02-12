@@ -128,8 +128,26 @@
   html {
     @apply font-sans;
   }
+  
+  button,
+  input {
+    @apply outline-none;
+  }
 
   button {
     @apply cursor-pointer;
   }
+
+  svg,
+  img,
+  figure {
+    @apply size-full
+  }
+
+  img,
+  figure {
+    @apply object-cover
+  }
+
+
 }

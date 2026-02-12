@@ -5,7 +5,7 @@
   "exports": {
     "./ui/*": "./src/components/ui/*.tsx",
     "./lib/*": "./src/lib/*.ts",
-    "./style": "./src/index.css"
+    "./*": "./src/*"
   },
   "scripts": {
     "build": "tsc"

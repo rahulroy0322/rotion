@@ -1,5 +1,3 @@
-"use no memo"
-
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
@@ -7,7 +5,7 @@ import useEmblaCarousel, {
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react"
-import { createContext, useCallback, useContext, useEffect, useState, type ComponentProps, type FC, type KeyboardEvent } from "react"
+import { createContext, use, useCallback, useEffect, useState, type ComponentProps, type FC, type KeyboardEvent } from "react"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
@@ -32,8 +30,8 @@ type CarouselContextProps = {
 
 const CarouselContext = createContext<CarouselContextProps | null>(null)
 
-function useCarousel() {
-  const context = useContext(CarouselContext)
+const useCarousel = () => {
+  const context = use(CarouselContext)
 
   if (!context) {
     throw new Error("useCarousel must be used within a <Carousel />")
@@ -237,15 +235,31 @@ const CarouselIndicators: FC<CarouselIndicatorsPropsType> = ({
   className,
   ...props
 }) => {
+  "use no memo"
   const { api } = useCarousel();
-  const numberOfSlides = api?.scrollSnapList().length || 0;
-  const currentSlide = api?.selectedScrollSnap() || 0;
+  const [numberOfSlides, setNumberOfSlides] = useState(api?.scrollSnapList().length || 0)
 
-  if (numberOfSlides <= 0) {
-    return null
-  }
+  const [currentSlide, setCurrentSlide] = useState(api?.selectedScrollSnap() || 0)
 
-  return <div {...props} className={cn("flex items-center justify-center gap-1", className)}>
+  useEffect(() => {
+    const onScroll = () => {
+      setCurrentSlide(api?.selectedScrollSnap() || 0)
+    }
+
+    const onSlidesInView = () => {
+      setNumberOfSlides(api?.scrollSnapList().length || 0)
+    }
+    api?.on('scroll', onScroll)
+    api?.on('slidesInView', onSlidesInView)
+    return () => {
+      api?.off('scroll', onScroll)
+      api?.off('slidesInView', onSlidesInView)
+    }
+  }, [api])
+
+  return <div {...props} className={
+    cn("flex items-center justify-center gap-1", className)
+  }>
     {
       Array.from({
         length: numberOfSlides
@@ -278,5 +292,5 @@ export {
   CarouselPrevious,
   CarouselNext,
   useCarousel,
-  CarouselIndicators
+  CarouselIndicators,
 }

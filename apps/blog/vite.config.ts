@@ -18,9 +18,9 @@ export default defineConfig({
       },
     }),
     tailwindcss({
-      optimize: {
-        minify: true
-      }
+      // optimize: {
+      //   minify: true
+      // }
     })
   ],
   resolve: {

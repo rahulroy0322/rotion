@@ -1,39 +1,24 @@
-import { Hero } from "#/components/hero";
-import type { CategoryType } from "#/types";
+import type { BlogType, CategoryType } from "#/types";
 import { createFileRoute } from "@tanstack/react-router";
 import type { FC } from "react";
 
 
-import { Carousel, CarouselContent, CarouselIndicators, CarouselItem, } from 'ui/ui/carousel'
-
+import { HomePageSection } from "#/components/home/blogs";
+import { HomePageHeroSection } from "#/components/home/hero";
+import { AchivmentsSection } from "#/components/home/achivments";
 
 const desc = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quidem consequatur est quaerat exercitationem officiis at itaque vero totam odio possimus placeat ut explicabo distinctio id"
 
-type UserType = {
-    name: string
-    avatar?: string
-}
 
-type ImageType = {
-    url: string
-    alt?: string
-}
+const time = new Date()
 
 const categories = [{
     _id: '1',
     name: 'test'
 }] as const satisfies CategoryType[]
 
-type PostType = {
-    _id: string
-    title: string
-    desc: string
-    images: ImageType[]
-    author: UserType
-    categories: CategoryType[]
-}
 
-const topPosts = [{
+const topBlogs = [{
     _id: '1',
     title: "Let's learn js basic.",
     desc,
@@ -44,6 +29,7 @@ const topPosts = [{
         name: "Author Name",
         avatar: "/avatar.webp"
     },
+    time,
     categories
 },
 {
@@ -57,63 +43,26 @@ const topPosts = [{
         name: "Author Name",
         avatar: "/write.jpg",
     },
+    time,
     categories
-}] as PostType[] satisfies PostType[]
+}] as BlogType[] satisfies BlogType[]
 
-
-const HomePageHeroSection: FC = () => {
-    return <Carousel className="relative">
-        <CarouselContent>
-            {
-                topPosts.map(({
-                    _id,
-                    title,
-                    desc,
-                    images,
-                    author: {
-                        avatar,
-                        name
-                    },
-                    categories
-                }) =>
-                    <CarouselItem key={_id}>
-                        <Hero
-                            title={title}
-                            desc={desc}
-                            heroImage={images[0].url}
-                            alt={
-                                images[0].alt
-                            }
-                            name={
-                                name
-                            }
-                            avatarUrl={
-                                avatar
-                            }
-                            categories={categories}
-                        />
-                    </CarouselItem>
-                )
-            }
-            {/* <CarouselItem>
-                <Hero
-                    title={'2'}
-                />
-            </CarouselItem>
-            <CarouselItem>
-                <Hero
-                    title={'3'}
-                />
-            </CarouselItem> */}
-        </CarouselContent>
-        <CarouselIndicators className="absolute bottom-2 left-2" />
-    </Carousel>
-}
+const blogs = topBlogs
 
 
 const HomePage: FC = () => <div>
-    <HomePageHeroSection />
+    <HomePageHeroSection
+        topBlogs={topBlogs}
+    />
+    <HomePageSection
+        blogs={blogs}
+    />
 
+    <AchivmentsSection
+        totalBlogs={
+            "100+"
+        }
+    />
 </div>
 
 

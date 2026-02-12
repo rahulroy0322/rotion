@@ -5,7 +5,8 @@ import { routeTree } from './routeTree.gen'
 import { createHashHistory, createRouter, RouterProvider } from '@tanstack/react-router'
 import { getContext, QueryProvider } from './integrations/tanstack-query/root-provider'
 
-import 'ui/style'
+import './index.css'
+import 'ui/index.css'
 
 const queryContext = getContext()
 
@@ -47,7 +48,6 @@ const App: FC = () => {
     // }
     router={router}
   />
-  // )
 }
 
 
