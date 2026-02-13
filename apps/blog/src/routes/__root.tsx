@@ -1,5 +1,5 @@
 import { MainHeader } from '#/components/header'
-import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import type { QueryClient } from '@tanstack/react-query'
@@ -10,6 +10,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 // import { ErrorPage } from '@/pages/error.page'
 // import { NotFoundPage } from '@/pages/not-found.page'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import { MainFooter } from '#/components/footer'
 
 
 type MyRouterContext = {
@@ -28,6 +29,7 @@ function RootComponent() {
     <div className='min-h-screen bg-linear-to-b from-slate-100 to-blue-200 flex flex-col'>
       <MainHeader />
       <Outlet />
+      <MainFooter />
       {/* <Toaster
 			closeButton
 			richColors

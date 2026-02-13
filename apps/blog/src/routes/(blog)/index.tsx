@@ -6,6 +6,7 @@ import type { FC } from "react";
 import { HomePageSection } from "#/components/home/blogs";
 import { HomePageHeroSection } from "#/components/home/hero";
 import { AchivmentsSection } from "#/components/home/achivments";
+import { Main } from "#/components/main";
 
 const desc = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quidem consequatur est quaerat exercitationem officiis at itaque vero totam odio possimus placeat ut explicabo distinctio id"
 
@@ -14,7 +15,19 @@ const time = new Date()
 
 const categories = [{
     _id: '1',
-    name: 'test'
+    name: 'web dev'
+}, {
+    _id: '2',
+    name: 'basic'
+}, {
+    _id: '3',
+    name: 'web dev'
+}, {
+    _id: '4',
+    name: 'basic'
+}, {
+    _id: '5',
+    name: 'basic'
 }] as const satisfies CategoryType[]
 
 
@@ -50,20 +63,21 @@ const topBlogs = [{
 const blogs = topBlogs
 
 
-const HomePage: FC = () => <div>
+const HomePage: FC = () => <>
     <HomePageHeroSection
         topBlogs={topBlogs}
     />
-    <HomePageSection
-        blogs={blogs}
-    />
-
-    <AchivmentsSection
-        totalBlogs={
-            "100+"
-        }
-    />
-</div>
+    <Main className="py-5">
+        <HomePageSection
+            blogs={blogs}
+        />
+        <AchivmentsSection
+            totalBlogs={
+                "100+"
+            }
+        />
+    </Main>
+</>
 
 
 const Route = createFileRoute('/(blog)/')({

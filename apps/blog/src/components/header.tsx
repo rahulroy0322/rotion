@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { ListIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 import { InputGroup, InputGroupAddon, InputGroupInput } from 'ui/ui/input-group'
 import { Button } from "ui/ui/button";
+import { LogoText } from "./logo";
 
 // type LinkType = {
 //     link: string
@@ -29,12 +30,10 @@ import { Button } from "ui/ui/button";
 // },
 // ] as const satisfies LinkType[]
 
-const MainHeader: FC = () => <header className="container grid grid-cols-6 gap-4 p-2">
+const MainHeader: FC = () => <header className="container grid grid-cols-6 gap-4 p-2 mx-auto">
     <nav className="flex items-center gap-4">
         <Link to="/">
-            JS<span className="text-primary">
-                ZONE
-            </span>
+          <LogoText/>
         </Link>
         {/* <ul className="flex items-center gap-4 hidden">
             {

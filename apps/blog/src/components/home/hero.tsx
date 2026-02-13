@@ -42,13 +42,13 @@ const Hero: FC<HeroPropsType> = ({
             />
         </figure>
         <div className="flex flex-col gap-1 basis-1/2">
-            <div>
+            <div className="flex gap-1">
                 {
                     categories.map(({
                         name,
                         _id
                     }) =>
-                        <Badge className="px-1 text-sm" key={_id}>
+                        <Badge className="px-1 text-sm" variant={_id === 'count-more' ? 'outline' : undefined} key={_id}>
                             {name}
                         </Badge>
                     )
@@ -96,13 +96,12 @@ type HomePageHeroSectionPropsType = {
 
 const HomePageHeroSection: FC<HomePageHeroSectionPropsType> = ({
     topBlogs
-}) => {
-    return <Carousel className="relative"
-        opts={{
-            loop: true,
-        }}
-        plugins={carouselPlugins}
-    >
+}) => <Carousel className="relative"
+    opts={{
+        loop: true,
+    }}
+    plugins={carouselPlugins}
+>
         <CarouselContent className="aspect-video md:aspect-20/9 lg:aspect-10/3">
             {
                 topBlogs.map(({
@@ -116,8 +115,19 @@ const HomePageHeroSection: FC<HomePageHeroSectionPropsType> = ({
                     },
                     categories,
                     time
-                }) =>
-                    <CarouselItem className="basis-full shrink-0" key={_id}>
+                }) => {
+
+                    const renderAbleCateries = [...categories]
+                    if (categories.length > 5) {
+                        renderAbleCateries.splice(4)
+                        const count = categories.length - 4
+                        renderAbleCateries.push({
+                            _id: 'count-more',
+                            name: `${count}+`
+                        })
+                    }
+
+                    return <CarouselItem className="basis-full shrink-0" key={_id}>
                         <Hero
                             className="pb-7"
                             title={title}
@@ -132,18 +142,18 @@ const HomePageHeroSection: FC<HomePageHeroSectionPropsType> = ({
                             avatarUrl={
                                 avatar
                             }
-                            categories={categories}
+                            categories={renderAbleCateries}
                             time={time}
                         />
                     </CarouselItem>
+                }
                 )
             }
         </CarouselContent>
         <CarouselIndicators
             className="absolute bottom-2 left-2" />
     </Carousel>
-}
 
-export{
+export {
     HomePageHeroSection
 }

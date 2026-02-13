@@ -27,6 +27,8 @@
      "baseUrl": ".",
     "paths": {
       "#/*": ["./src/*"],
+
+      // TODO! move to ui package
        "@/*": ["../../packages/ui/src/*"]
     }
   },
