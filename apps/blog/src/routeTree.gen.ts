@@ -10,33 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as blogIndexRouteImport } from './routes/(blog)/index'
+import { Route as blogBlogSlugRouteImport } from './routes/(blog)/blog/$slug'
 
 const blogIndexRoute = blogIndexRouteImport.update({
   id: '/(blog)/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const blogBlogSlugRoute = blogBlogSlugRouteImport.update({
+  id: '/(blog)/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof blogIndexRoute
+  '/blog/$slug': typeof blogBlogSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof blogIndexRoute
+  '/blog/$slug': typeof blogBlogSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(blog)/': typeof blogIndexRoute
+  '/(blog)/blog/$slug': typeof blogBlogSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/blog/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/(blog)/'
+  to: '/' | '/blog/$slug'
+  id: '__root__' | '/(blog)/' | '/(blog)/blog/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   blogIndexRoute: typeof blogIndexRoute
+  blogBlogSlugRoute: typeof blogBlogSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof blogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(blog)/blog/$slug': {
+      id: '/(blog)/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof blogBlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   blogIndexRoute: blogIndexRoute,
+  blogBlogSlugRoute: blogBlogSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

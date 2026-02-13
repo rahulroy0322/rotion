@@ -1,7 +1,7 @@
 import { cn } from "ui/lib/utils"
-import type { ComponentProps, FC,  } from "react"
+import type { ComponentProps, FC, } from "react"
 
-type MainPropsType = ComponentProps<'main'> 
+type MainPropsType = ComponentProps<'main'>
 
 const Main: FC<MainPropsType> = ({
   children,

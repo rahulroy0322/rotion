@@ -5,8 +5,8 @@ import type { BlogType, CategoryType } from "#/types"
 import type { ComponentProps, FC } from "react"
 import { cn } from "ui/lib/utils"
 import { Badge } from "ui/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "ui/ui/avatar"
-import { UserCircleIcon } from "@phosphor-icons/react"
+import { Avatar } from "#/components/avatar"
+import { Image } from "#/components/image"
 
 
 type HeroPropsType = {
@@ -35,12 +35,13 @@ const Hero: FC<HeroPropsType> = ({
     time,
     ...props
 }) => <article {...props} className={cn("size-full relative overflow-hidden isolate flex gap-6 items-end p-2", className)}>
-        <figure className="absolute inset-0 -z-10 before:bg-gray-500/60 before:absolute before:inset-0">
-            <img
-                src={heroImage}
-                alt={alt}
-            />
-        </figure>
+        <Image
+            className="absolute inset-0 -z-10 before:bg-gray-500/60 before:absolute before:inset-0"
+            src={
+                heroImage
+            }
+            alt={alt}
+        />
         <div className="flex flex-col gap-1 basis-1/2">
             <div className="flex gap-1">
                 {
@@ -63,14 +64,10 @@ const Hero: FC<HeroPropsType> = ({
         </div>
         <div className="text-end w-fit ml-auto">
             <div className="flex gap-2 items-center">
-                <Avatar className="size-8">
-                    <AvatarImage src={avatarUrl} alt={name} />
-                    <AvatarFallback>
-                        <UserCircleIcon
-                            className="size-full"
-                        />
-                    </AvatarFallback>
-                </Avatar>
+
+                <Avatar
+          src={avatarUrl} alt={name}
+                />
                 <h3 className="font-bold text-lg">
                     {name}
                 </h3>
@@ -116,7 +113,6 @@ const HomePageHeroSection: FC<HomePageHeroSectionPropsType> = ({
                     categories,
                     time
                 }) => {
-
                     const renderAbleCateries = [...categories]
                     if (categories.length > 5) {
                         renderAbleCateries.splice(4)

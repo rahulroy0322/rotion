@@ -32,11 +32,13 @@ const HomePageSection: FC<HomePageSectionPropsType> = ({
                     },
                     desc,
                     title,
-                    time
+                    time,
+                    slug
                 }) =>
                     <li key={_id}>
                         <BlogCard
                             title={title}
+                            slug={slug}
                             desc={desc}
                             heroImage={images[0].url}
                             alt={

@@ -17,6 +17,7 @@ type ImageType = {
 type BlogType = {
     _id: string
     title: string
+    slug: string
     desc: string
     images: ImageType[]
     author: UserType
@@ -24,7 +25,8 @@ type BlogType = {
     time: Date
 }
 
-export type{
+export type {
     CategoryType,
-    BlogType
+    BlogType,
+    ImageType
 }

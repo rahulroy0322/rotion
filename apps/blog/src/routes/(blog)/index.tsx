@@ -34,6 +34,7 @@ const categories = [{
 const topBlogs = [{
     _id: '1',
     title: "Let's learn js basic.",
+    slug: "let-learn-js-basic",
     desc,
     images: [{
         url: "/write.jpg",
@@ -48,6 +49,7 @@ const topBlogs = [{
 {
     _id: '2',
     title: "Let's learn ts basic.",
+    slug: "let-learn-ts-basic",
     desc,
     images: [{
         url: "/avatar.webp"
