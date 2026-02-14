@@ -1,8 +1,5 @@
 const { format: timeFormat } = Intl.DateTimeFormat(undefined, {
-    dateStyle: 'medium',
+  dateStyle: 'medium',
 })
 
-
-export {
-    timeFormat
-}
+export { timeFormat }

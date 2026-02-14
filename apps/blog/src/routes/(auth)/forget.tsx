@@ -102,21 +102,17 @@ import { createFileRoute } from '@tanstack/react-router'
 // 	</form>
 // }
 
+import type { FC } from 'react'
 
-import type { FC } from "react"
+// biome-ignore lint/complexity/noBannedTypes: temp
+type ForgetPagePropsType = {}
 
-type ForgetPagePropsType={
-	
-}
-
-const ForgetPage:FC<ForgetPagePropsType> = ()=> <div className='text-2xl font-extrabold text-destructive'>
-	TODO!
-</div>
+const ForgetPage: FC<ForgetPagePropsType> = () => (
+  <div className="text-2xl font-extrabold text-destructive">TODO!</div>
+)
 
 const Route = createFileRoute('/(auth)/forget')({
-	component: ForgetPage,
+  component: ForgetPage,
 })
 
-export {
-	Route
-}
+export { Route }

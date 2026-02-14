@@ -1,27 +1,27 @@
-import { cn } from "ui/lib/utils"
-import { UserCircleIcon } from "@phosphor-icons/react"
-import type { FC } from "react"
+import { UserCircleIcon } from '@phosphor-icons/react'
+import type { FC } from 'react'
+import { cn } from 'ui/lib/utils'
 
 import { Avatar as Av, AvatarFallback, AvatarImage } from 'ui/ui/avatar'
 
 type AvatarPropsType = {
-    src: string|undefined
-    alt: string|undefined
+  src: string | undefined
+  alt: string | undefined
 } & Parameters<typeof Av>[0]
 
-const Avatar: FC<AvatarPropsType> = ({
-    src,
-    alt,
-    className,
-    ...props
-}) => <Av {...props} className={cn("size-8", className)}>
-        <AvatarImage src={src}
-            alt={alt} />
-        <AvatarFallback>
-            <UserCircleIcon
-                className="size-full"
-            />
-        </AvatarFallback>
-    </Av>
+const Avatar: FC<AvatarPropsType> = ({ src, alt, className, ...props }) => (
+  <Av
+    {...props}
+    className={cn('size-8', className)}
+  >
+    <AvatarImage
+      alt={alt}
+      src={src}
+    />
+    <AvatarFallback>
+      <UserCircleIcon className="size-full" />
+    </AvatarFallback>
+  </Av>
+)
 
 export { Avatar }

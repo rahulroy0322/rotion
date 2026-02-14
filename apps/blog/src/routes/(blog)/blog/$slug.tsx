@@ -1,82 +1,88 @@
-import { Main } from '#/components/main'
-import { Image } from '#/components/image'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, type FC } from 'react'
+import { type FC, useState } from 'react'
+import { Image } from '#/components/image'
+import { Main } from '#/components/main'
 import type { ImageType } from '#/types'
 import { Button } from '@/components/ui/button'
 
 //  name: "Author Name",
 //     avatar: "/write.jpg",
 
-const images = [{
-  url: "/write.jpg",
-},
-{
-  url: "/write.jpg",
-}, {
-  url: "/avatar.webp",
-}, {
-  url: "/avatar.webp",
-}, {
-  url: "/avatar.webp",
-}, {
-  url: "/write.jpg",
-}, {
-  url: "/avatar.webp",
-}, {
-  url: "/write.jpg",
-}] as ImageType[] satisfies ImageType[]
+const images = [
+  {
+    url: '/write.jpg',
+  },
+  {
+    url: '/write.jpg',
+  },
+  {
+    url: '/avatar.webp',
+  },
+  {
+    url: '/avatar.webp',
+  },
+  {
+    url: '/avatar.webp',
+  },
+  {
+    url: '/write.jpg',
+  },
+  {
+    url: '/avatar.webp',
+  },
+  {
+    url: '/write.jpg',
+  },
+] as ImageType[] satisfies ImageType[]
 
 type BlogPageImagesPropsType = {
   images: ImageType[]
   slug: string
 }
 
-const BlogPageImages: FC<BlogPageImagesPropsType> = ({
-  slug,
-  images
-}) => {
-  const [selectedImage, setSelectedImage] = useState(
-    images.at(0)
-  )
+const BlogPageImages: FC<BlogPageImagesPropsType> = ({ slug, images }) => {
+  const [selectedImage, setSelectedImage] = useState(images.at(0))
 
   if (!selectedImage) {
     return null
   }
 
-  return <div className='space-y-2 overflow-hidden'>
-    <Image
-      className='aspect-video md:aspect-20/9 lg:aspect-10/3'
-      src={selectedImage.url}
-      alt={selectedImage.alt || slug} />
+  return (
+    <div className="space-y-2 overflow-hidden">
+      <Image
+        alt={selectedImage.alt || slug}
+        className="aspect-video md:aspect-20/9 lg:aspect-10/3"
+        src={selectedImage.url}
+      />
 
-    <div className='flex gap-2 overflow-auto pb-3 scroll-smooth items-center mx-auto max-w-full w-fit px-1'>
-      {
-        images.map(({
-          url, alt = slug
-        }) => (
-          <Button key={
-            `${alt}-${url}`
-          } aria-label={`See ${alt}`}
-            onClick={() => setSelectedImage({
-              url,
-              alt
-            })}
-            className='aspect-video h-20 w-auto p-0 cursor-pointer'
-            variant='ghost'
-            render={<Image
-              src={url}
-              alt={alt} />} />
-        ))
-      }
+      <div className="flex gap-2 overflow-auto pb-3 scroll-smooth items-center mx-auto max-w-full w-fit px-1">
+        {images.map(({ url, alt = slug }) => (
+          <Button
+            aria-label={`See ${alt}`}
+            className="aspect-video h-20 w-auto p-0 cursor-pointer"
+            key={`${alt}-${url}`}
+            onClick={() =>
+              setSelectedImage({
+                url,
+                alt,
+              })
+            }
+            render={
+              <Image
+                alt={alt}
+                src={url}
+              />
+            }
+            variant="ghost"
+          />
+        ))}
+      </div>
     </div>
-  </div>
-
+  )
 }
 
-
 // !dummy data from w3schools
-const blogContent= `
+const blogContent = `
 
       <div id="mainLeaderboard" style="overflow:hidden;">
         <!-- MainLeaderboard-->
@@ -273,37 +279,33 @@ a.track-progress-btn {
 </div>
 `
 
-
 const BlogPage: FC = () => {
-  const {
-    slug
-  } = useParams()
+  const { slug } = useParams()
 
-  return <Main
-    className='p-2'
-  >
-    <BlogPageImages
-      images={images}
-      slug={slug}
-    />
+  return (
+    <Main className="p-2">
+      <BlogPageImages
+        images={images}
+        slug={slug}
+      />
 
-
-<div>
-<div className='prose' dangerouslySetInnerHTML={{
-  __html: blogContent
-}}/>
-</div>
-  </Main>
+      <div>
+        <div
+          className="prose"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: i take the full res
+          dangerouslySetInnerHTML={{
+            __html: blogContent,
+          }}
+        />
+      </div>
+    </Main>
+  )
 }
 
 const Route = createFileRoute('/(blog)/blog/$slug')({
-  component: BlogPage
+  component: BlogPage,
 })
-
-
 
 const { useParams } = Route
 
-export {
-  Route
-}
+export { Route }

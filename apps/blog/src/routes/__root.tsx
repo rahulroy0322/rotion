@@ -1,7 +1,6 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import type { QueryClient } from '@tanstack/react-query'
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 // import { Loading } from '@/components/app/loading'
@@ -10,21 +9,18 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 // import { NotFoundPage } from '@/pages/not-found.page'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
-
 type MyRouterContext = {
   client: QueryClient
   // auth: AuthContextType
 }
 
-
 const Route = createRootRouteWithContext<MyRouterContext>()({
   component: RootComponent,
-
 })
 
 function RootComponent() {
   return (
-    <div className='min-h-screen bg-linear-to-b from-slate-100 to-blue-200 flex flex-col'>
+    <div className="min-h-screen bg-linear-to-b from-slate-100 to-blue-200 flex flex-col">
       {/* <MainHeader /> */}
       <Outlet />
       {/* <MainFooter /> */}
@@ -51,7 +47,4 @@ function RootComponent() {
   )
 }
 
-
-export {
-  Route
-}
+export { Route }

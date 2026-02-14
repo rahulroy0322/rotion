@@ -9,13 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as blogRouteRouteImport } from './routes/(blog)/route'
-import { Route as authRouteRouteImport } from './routes/(auth)/route'
-import { Route as blogIndexRouteImport } from './routes/(blog)/index'
-import { Route as authRegisterRouteImport } from './routes/(auth)/register'
-import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authForgetRouteImport } from './routes/(auth)/forget'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as blogBlogSlugRouteImport } from './routes/(blog)/blog/$slug'
+import { Route as blogIndexRouteImport } from './routes/(blog)/index'
+import { Route as blogRouteRouteImport } from './routes/(blog)/route'
 
 const blogRouteRoute = blogRouteRouteImport.update({
   id: '/(blog)',
@@ -163,7 +163,7 @@ const authRouteRouteChildren: authRouteRouteChildren = {
 }
 
 const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
-  authRouteRouteChildren,
+  authRouteRouteChildren
 )
 
 interface blogRouteRouteChildren {
@@ -177,7 +177,7 @@ const blogRouteRouteChildren: blogRouteRouteChildren = {
 }
 
 const blogRouteRouteWithChildren = blogRouteRoute._addFileChildren(
-  blogRouteRouteChildren,
+  blogRouteRouteChildren
 )
 
 const rootRouteChildren: RootRouteChildren = {
