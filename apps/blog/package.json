@@ -16,8 +16,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-autoplay": "^8.6.0",
+    "form": "workspace:*",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "schema": "workspace:*",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
     "ui": "workspace:*"

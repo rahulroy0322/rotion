@@ -1,0 +1,17 @@
+{
+  "name": "schema",
+  "private": true,
+  "version": "0.0.0",
+  "exports": {
+    "./*": "./src/*.schema.tsx"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
+}

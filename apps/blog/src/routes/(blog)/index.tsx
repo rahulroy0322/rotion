@@ -2,14 +2,12 @@ import type { BlogType, CategoryType } from "#/types";
 import { createFileRoute } from "@tanstack/react-router";
 import type { FC } from "react";
 
-
 import { HomePageSection } from "#/components/home/blogs";
 import { HomePageHeroSection } from "#/components/home/hero";
 import { AchivmentsSection } from "#/components/home/achivments";
 import { Main } from "#/components/main";
 
 const desc = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quidem consequatur est quaerat exercitationem officiis at itaque vero totam odio possimus placeat ut explicabo distinctio id"
-
 
 const time = new Date()
 

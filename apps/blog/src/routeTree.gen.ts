@@ -9,68 +9,180 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as blogRouteRouteImport } from './routes/(blog)/route'
+import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as blogIndexRouteImport } from './routes/(blog)/index'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authForgetRouteImport } from './routes/(auth)/forget'
 import { Route as blogBlogSlugRouteImport } from './routes/(blog)/blog/$slug'
 
-const blogIndexRoute = blogIndexRouteImport.update({
-  id: '/(blog)/',
-  path: '/',
+const blogRouteRoute = blogRouteRouteImport.update({
+  id: '/(blog)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const blogBlogSlugRoute = blogBlogSlugRouteImport.update({
-  id: '/(blog)/blog/$slug',
-  path: '/blog/$slug',
+const authRouteRoute = authRouteRouteImport.update({
+  id: '/(auth)',
   getParentRoute: () => rootRouteImport,
+} as any)
+const blogIndexRoute = blogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => blogRouteRoute,
+} as any)
+const authRegisterRoute = authRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const authForgetRoute = authForgetRouteImport.update({
+  id: '/forget',
+  path: '/forget',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const blogBlogSlugRoute = blogBlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => blogRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/forget': typeof authForgetRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
   '/': typeof blogIndexRoute
   '/blog/$slug': typeof blogBlogSlugRoute
 }
 export interface FileRoutesByTo {
+  '/forget': typeof authForgetRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
   '/': typeof blogIndexRoute
   '/blog/$slug': typeof blogBlogSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/(auth)': typeof authRouteRouteWithChildren
+  '/(blog)': typeof blogRouteRouteWithChildren
+  '/(auth)/forget': typeof authForgetRoute
+  '/(auth)/login': typeof authLoginRoute
+  '/(auth)/register': typeof authRegisterRoute
   '/(blog)/': typeof blogIndexRoute
   '/(blog)/blog/$slug': typeof blogBlogSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/blog/$slug'
+  fullPaths: '/forget' | '/login' | '/register' | '/' | '/blog/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/blog/$slug'
-  id: '__root__' | '/(blog)/' | '/(blog)/blog/$slug'
+  to: '/forget' | '/login' | '/register' | '/' | '/blog/$slug'
+  id:
+    | '__root__'
+    | '/(auth)'
+    | '/(blog)'
+    | '/(auth)/forget'
+    | '/(auth)/login'
+    | '/(auth)/register'
+    | '/(blog)/'
+    | '/(blog)/blog/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  blogIndexRoute: typeof blogIndexRoute
-  blogBlogSlugRoute: typeof blogBlogSlugRoute
+  authRouteRoute: typeof authRouteRouteWithChildren
+  blogRouteRoute: typeof blogRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/(blog)': {
+      id: '/(blog)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof blogRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)': {
+      id: '/(auth)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof authRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(blog)/': {
       id: '/(blog)/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof blogIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof blogRouteRoute
+    }
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(auth)/forget': {
+      id: '/(auth)/forget'
+      path: '/forget'
+      fullPath: '/forget'
+      preLoaderRoute: typeof authForgetRouteImport
+      parentRoute: typeof authRouteRoute
     }
     '/(blog)/blog/$slug': {
       id: '/(blog)/blog/$slug'
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof blogBlogSlugRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof blogRouteRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
+interface authRouteRouteChildren {
+  authForgetRoute: typeof authForgetRoute
+  authLoginRoute: typeof authLoginRoute
+  authRegisterRoute: typeof authRegisterRoute
+}
+
+const authRouteRouteChildren: authRouteRouteChildren = {
+  authForgetRoute: authForgetRoute,
+  authLoginRoute: authLoginRoute,
+  authRegisterRoute: authRegisterRoute,
+}
+
+const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
+  authRouteRouteChildren,
+)
+
+interface blogRouteRouteChildren {
+  blogIndexRoute: typeof blogIndexRoute
+  blogBlogSlugRoute: typeof blogBlogSlugRoute
+}
+
+const blogRouteRouteChildren: blogRouteRouteChildren = {
   blogIndexRoute: blogIndexRoute,
   blogBlogSlugRoute: blogBlogSlugRoute,
+}
+
+const blogRouteRouteWithChildren = blogRouteRoute._addFileChildren(
+  blogRouteRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  authRouteRoute: authRouteRouteWithChildren,
+  blogRouteRoute: blogRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
