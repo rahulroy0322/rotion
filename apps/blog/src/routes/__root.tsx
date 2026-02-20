@@ -3,6 +3,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { Toaster } from 'ui/ui/sonner'
 // import { Loading } from '@/components/app/loading'
 // import type { AuthContextType } from '@/context/auth'
 // import { ErrorPage } from '@/pages/error.page'
@@ -24,11 +25,11 @@ function RootComponent() {
       {/* <MainHeader /> */}
       <Outlet />
       {/* <MainFooter /> */}
-      {/* <Toaster
-			closeButton
-			richColors
-			swipeDirections={['bottom', 'right']}
-		/> */}
+      <Toaster
+        closeButton
+        richColors
+        swipeDirections={['bottom', 'right']}
+      />
       {import.meta.env.DEV ? (
         <TanStackDevtools
           config={{

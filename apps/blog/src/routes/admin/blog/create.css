@@ -1,0 +1,48 @@
+.tiptap {
+  /* biome-ignore lint/complexity/noImportantStyles: outsource */
+  outline: none !important;
+  /* biome-ignore lint/complexity/noImportantStyles: outsource */
+  border: none !important;
+
+  :first-child {
+    margin-top: 0;
+  }
+
+  li {
+    &::marker {
+      color: var(--primary);
+    }
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    border-left: 3px solid var(--primary);
+  }
+
+  code {
+    padding-inline: calc(var(--spacing) * 1);
+    color: var(--background);
+    background: var(--primary);
+    @apply after:hidden before:hidden;
+  }
+
+  pre {
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    font-family: var(--font-sans);
+    color: var(--background);
+    background: var(--foreground);
+
+    code {
+      padding-inline: 0;
+      color: inherit;
+      background: none;
+    }
+  }
+
+  hr {
+    margin: 2em 0;
+    border: none;
+    border-top: 1px solid var(--primary);
+  }
+}

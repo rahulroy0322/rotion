@@ -140,7 +140,6 @@ const user = {
 
 const DesktopNav: FC = () => (
   <>
-    {' '}
     <nav className="flex items-center col-span-3 gap-6">
       <Link to="/">
         <LogoText />

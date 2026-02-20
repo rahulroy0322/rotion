@@ -16,7 +16,14 @@ import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as blogBlogSlugRouteImport } from './routes/(blog)/blog/$slug'
 import { Route as blogIndexRouteImport } from './routes/(blog)/index'
 import { Route as blogRouteRouteImport } from './routes/(blog)/route'
+import { Route as AdminBlogCreateRouteImport } from './routes/admin/blog/create'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const blogRouteRoute = blogRouteRouteImport.update({
   id: '/(blog)',
   getParentRoute: () => rootRouteImport,
@@ -45,6 +52,11 @@ const authForgetRoute = authForgetRouteImport.update({
   path: '/forget',
   getParentRoute: () => authRouteRoute,
 } as any)
+const AdminBlogCreateRoute = AdminBlogCreateRouteImport.update({
+  id: '/blog/create',
+  path: '/blog/create',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const blogBlogSlugRoute = blogBlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
@@ -52,52 +64,82 @@ const blogBlogSlugRoute = blogBlogSlugRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/admin': typeof AdminRouteRouteWithChildren
   '/forget': typeof authForgetRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/': typeof blogIndexRoute
   '/blog/$slug': typeof blogBlogSlugRoute
+  '/admin/blog/create': typeof AdminBlogCreateRoute
 }
 export interface FileRoutesByTo {
+  '/admin': typeof AdminRouteRouteWithChildren
   '/forget': typeof authForgetRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/': typeof blogIndexRoute
   '/blog/$slug': typeof blogBlogSlugRoute
+  '/admin/blog/create': typeof AdminBlogCreateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(auth)': typeof authRouteRouteWithChildren
   '/(blog)': typeof blogRouteRouteWithChildren
+  '/admin': typeof AdminRouteRouteWithChildren
   '/(auth)/forget': typeof authForgetRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/(blog)/': typeof blogIndexRoute
   '/(blog)/blog/$slug': typeof blogBlogSlugRoute
+  '/admin/blog/create': typeof AdminBlogCreateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/forget' | '/login' | '/register' | '/' | '/blog/$slug'
+  fullPaths:
+    | '/admin'
+    | '/forget'
+    | '/login'
+    | '/register'
+    | '/'
+    | '/blog/$slug'
+    | '/admin/blog/create'
   fileRoutesByTo: FileRoutesByTo
-  to: '/forget' | '/login' | '/register' | '/' | '/blog/$slug'
+  to:
+    | '/admin'
+    | '/forget'
+    | '/login'
+    | '/register'
+    | '/'
+    | '/blog/$slug'
+    | '/admin/blog/create'
   id:
     | '__root__'
     | '/(auth)'
     | '/(blog)'
+    | '/admin'
     | '/(auth)/forget'
     | '/(auth)/login'
     | '/(auth)/register'
     | '/(blog)/'
     | '/(blog)/blog/$slug'
+    | '/admin/blog/create'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   authRouteRoute: typeof authRouteRouteWithChildren
   blogRouteRoute: typeof blogRouteRouteWithChildren
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(blog)': {
       id: '/(blog)'
       path: ''
@@ -140,6 +182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authForgetRouteImport
       parentRoute: typeof authRouteRoute
     }
+    '/admin/blog/create': {
+      id: '/admin/blog/create'
+      path: '/blog/create'
+      fullPath: '/admin/blog/create'
+      preLoaderRoute: typeof AdminBlogCreateRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/(blog)/blog/$slug': {
       id: '/(blog)/blog/$slug'
       path: '/blog/$slug'
@@ -180,9 +229,22 @@ const blogRouteRouteWithChildren = blogRouteRoute._addFileChildren(
   blogRouteRouteChildren
 )
 
+interface AdminRouteRouteChildren {
+  AdminBlogCreateRoute: typeof AdminBlogCreateRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminBlogCreateRoute: AdminBlogCreateRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren
+)
+
 const rootRouteChildren: RootRouteChildren = {
   authRouteRoute: authRouteRouteWithChildren,
   blogRouteRoute: blogRouteRouteWithChildren,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
