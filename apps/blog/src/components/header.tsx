@@ -223,12 +223,13 @@ const DesktopNav: FC<NavPropsType> = ({ user }) => (
       </Select>
       {!user ? (
         <>
-          <Link to="/">
-            <Button variant={'outline'}>Login</Button>
-          </Link>
-          <Link to="/">
-            <Button>Register</Button>
-          </Link>
+          <Button
+            render={<Link to="/login" />}
+            variant={'outline'}
+          >
+            Login
+          </Button>
+          <Button render={<Link to="/register" />}>Register</Button>
         </>
       ) : (
         <>

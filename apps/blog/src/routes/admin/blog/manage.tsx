@@ -1,5 +1,11 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useLoaderData,
+} from '@tanstack/react-router'
+import { type FC, useMemo, useState } from 'react'
+import type { BlogStatusType, BlogType } from 'schema/blog'
 import { Input } from 'ui/ui/input'
 import {
   Select,
@@ -8,84 +14,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'ui/ui/select'
+import { getBlogs } from '#/api/blog'
 import { Image } from '#/components/image'
-import type { BlogStatusType, BlogType, CategoryType } from '#/types'
 import { timeFormat } from '#/utils/time'
+import { toast } from '@/components/ui/sonner'
 
 type BlogStatus = BlogStatusType | 'all'
 
-const Route = createFileRoute('/admin/blog/manage')({
-  component: RouteComponent,
-})
+type ManagePageImplPropsType = {
+  blogs: BlogType[]
+}
 
-const desc =
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quidem consequatur est quaerat exercitationem officiis at itaque vero totam odio possimus placeat ut explicabo distinctio id'
-
-const time = new Date()
-
-const categories = [
-  {
-    _id: '1',
-    name: 'web dev',
-  },
-  {
-    _id: '2',
-    name: 'basic',
-  },
-  {
-    _id: '3',
-    name: 'web dev',
-  },
-  {
-    _id: '4',
-    name: 'basic',
-  },
-  {
-    _id: '5',
-    name: 'basic',
-  },
-] as const satisfies CategoryType[]
-
-const blogs = [
-  {
-    _id: '1',
-    title: "Let's learn js basic.",
-    slug: 'let-learn-js-basic',
-    desc,
-    images: [
-      {
-        url: '/write.jpg',
-      },
-    ],
-    author: {
-      name: 'Author Name',
-      avatar: '/avatar.webp',
-    },
-    time,
-    categories,
-    status: 'draft',
-  },
-  {
-    _id: '2',
-    title: "Let's learn ts basic.",
-    slug: 'let-learn-ts-basic',
-    desc,
-    images: [
-      {
-        url: '/avatar.webp',
-      },
-    ],
-    author: {
-      name: 'Author Name',
-      avatar: '/write.jpg',
-    },
-    time,
-    categories,
-    status: 'published',
-  },
-] as BlogType[] satisfies BlogType[]
-
-function RouteComponent() {
+const ManagePageImpl: FC<ManagePageImplPropsType> = ({ blogs }) => {
   const [filterBlogs, setFilterBlogs] = useState(blogs)
 
   const { all, draft, published } = useMemo(() => {
@@ -149,33 +89,72 @@ function RouteComponent() {
 
       <div className="overflow-auto grow">
         <ul className="space-y-2">
-          {filterBlogs.map(({ _id, images, title, time, slug }) => (
-            <li key={_id}>
-              {/* 
+          {filterBlogs.map(
+            ({
+              //images,
+              title,
+              time,
+              slug,
+            }) => (
+              <li key={slug}>
+                {/* 
                   // TODO!
                     */}
-              <Link
-                className="flex items-end gap-2"
-                params={{
-                  slug,
-                }}
-                to="/blog/$slug"
-              >
-                <Image
-                  alt={images[0].alt || title}
-                  className="size-24"
-                  src={images[0].url}
-                />
-                <div>
-                  <h2>{title}</h2>
-                  <time dateTime={time.toString()}>{timeFormat(time)}</time>
-                </div>
-              </Link>
-            </li>
-          ))}
+                <Link
+                  className="flex items-end gap-2"
+                  params={{
+                    slug,
+                  }}
+                  to="/blog/$slug"
+                >
+                  <Image
+                    // alt={images[0].alt || title}
+                    alt=""
+                    className="size-24"
+                    src={'/write.jpg'}
+                  />
+                  <div>
+                    <h2 className="text-lg font-bold">{title}</h2>
+                    <time
+                      className="text-xs text-muted-foreground"
+                      dateTime={time.toString()}
+                    >
+                      {timeFormat(time)}
+                    </time>
+                  </div>
+                </Link>
+              </li>
+            )
+          )}
         </ul>
       </div>
     </div>
   )
 }
+
+const ManagePage: FC = () => {
+  const blogs = useLoaderData({
+    from: '/admin/blog/manage',
+  })
+
+  return <ManagePageImpl blogs={blogs} />
+}
+
+const Route = createFileRoute('/admin/blog/manage')({
+  component: ManagePage,
+  loader: async ({ context: { client } }) => {
+    try {
+      return await client.fetchQuery({
+        queryKey: ['tournaments'],
+        queryFn: getBlogs,
+      })
+    } catch (e) {
+      toast.error(`Error: fetching blogs ${(e as Error).toString()}`)
+      throw redirect({
+        href: '/',
+      })
+    }
+  },
+})
+
 export { Route }
