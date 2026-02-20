@@ -1,7 +1,12 @@
 import type { RequestHandler } from 'express'
 import { blogSchema } from 'schema/blog'
 import type { ResType } from '../@types/res'
-import { ConflictError, ServerError, ZodError } from '../error/app.error'
+import {
+  ConflictError,
+  NotFoundError,
+  ServerError,
+  ZodError,
+} from '../error/app.error'
 import { createBlog, findBlog, getAllBlogs } from '../services/blog'
 
 const getPublishedBlogsController: RequestHandler = async (_req, res) => {
@@ -14,6 +19,29 @@ const getPublishedBlogsController: RequestHandler = async (_req, res) => {
     success: true,
     data: {
       blogs,
+    },
+  } satisfies ResType)
+}
+
+const getPublishedBlogBySlugController: RequestHandler<{
+  slug: string
+}> = async (req, res) => {
+  const blog = await findBlog({
+    slug: req.params.slug,
+  })
+
+  if (!blog) {
+    throw new NotFoundError('Blog Not Found')
+  }
+
+  if (blog.status === 'draft') {
+    throw new NotFoundError('Blog Not Published yet')
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      blog,
     },
   } satisfies ResType)
 }
@@ -58,4 +86,8 @@ const createBlogController: RequestHandler = async (req, res) => {
   } satisfies ResType)
 }
 
-export { getPublishedBlogsController, createBlogController }
+export {
+  getPublishedBlogsController,
+  createBlogController,
+  getPublishedBlogBySlugController,
+}

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   createBlogController,
+  getPublishedBlogBySlugController,
   getPublishedBlogsController,
 } from '../controllers/blog.controller'
 
@@ -10,6 +11,9 @@ blogRouter
   .route('/')
   .get(getPublishedBlogsController)
   .post(createBlogController)
+
+blogRouter.route('/:slug').get(getPublishedBlogBySlugController)
+// .post(createBlogController)
 
 // blogRouter
 //   .route('/')
