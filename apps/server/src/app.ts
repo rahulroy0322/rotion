@@ -1,5 +1,7 @@
 import cors from 'cors'
 import express, { type Express, json, urlencoded } from 'express'
+import type { UserType } from './@types/user'
+import { auth } from './auth/main'
 import ENV from './config/env.config'
 import { errorMiddleware } from './middlewares/error.middleware'
 import { notFoundMiddleware } from './middlewares/not-found.middleware'
@@ -22,6 +24,8 @@ app.use(
 // // req-> info
 // app.use(requestInfoMiddleware);
 
+app.use(auth.initialize())
+
 // api routes
 app.use('/api/v1', apiRouter)
 
@@ -29,14 +33,10 @@ app.use('/api/v1', apiRouter)
 app.use(notFoundMiddleware)
 app.use(errorMiddleware)
 
-// declare global {
-//   namespace Express {
-//     interface Request {
-//       userId?: string;
-//       // context: ContextType;
-//       // user: UserType;
-//     }
-//   }
-// }
+declare global {
+  namespace Express {
+    interface User extends UserType {}
+  }
+}
 
 export default app
