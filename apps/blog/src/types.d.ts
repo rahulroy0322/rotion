@@ -14,6 +14,8 @@ type ImageType = {
   alt?: string
 }
 
+type BlogStatusType = 'draft' | 'published'
+
 type BlogType = {
   _id: string
   title: string
@@ -23,6 +25,7 @@ type BlogType = {
   author: UserType
   categories: CategoryType[]
   time: Date
+  status: BlogStatusType
 }
 
-export type { CategoryType, BlogType, ImageType }
+export type { CategoryType, BlogType, ImageType, BlogStatusType }
