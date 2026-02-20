@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { TextStyleKit } from '@tiptap/extension-text-style'
-import { EditorContent, useEditor } from '@tiptap/react'
+import { type Editor, EditorContent, useEditor } from '@tiptap/react'
 
 import StarterKit from '@tiptap/starter-kit'
 import { type FC, useState } from 'react'
@@ -15,6 +15,7 @@ import {
   XIcon,
 } from '@phosphor-icons/react'
 import { useMutation } from '@tanstack/react-query'
+import { blogSchema } from 'schema/blog'
 import { Button } from 'ui/ui/button'
 import {
   Drawer,
@@ -31,7 +32,7 @@ import { BlogBubbleMenu, BlogMainMenu } from '#/components/editor/menu'
 const extensions = [TextStyleKit, StarterKit]
 
 type CreateBlogHeaderPropsType = {
-  // editor: Editor
+  editor: Editor
   title: string
   setTitle: (title: string) => void
   slug: string
@@ -47,15 +48,26 @@ const CreateBlogHeader: FC<CreateBlogHeaderPropsType> = ({
   slug,
   genSlug,
   setSlug,
+  editor,
 }) => {
   const { mutate: save, isPending: isSavePending } = useMutation({
     mutationKey: ['blogs', title],
     mutationFn: async () => {
-      // const content = editor.getHTML().replace(/\s*/, ' ').trim()
-
       await new Promise((res, rej) => {
         toast.promise(
           async () => {
+            const content = editor.getHTML().replace(/\s*/, ' ').trim()
+
+            const parsed = blogSchema.safeParse({
+              title,
+              slug,
+              content,
+            })
+
+            if (!parsed.success) {
+              throw parsed.error
+            }
+
             return new Promise((res, rej) => {
               setTimeout(Math.random() > 0.5 ? res : rej, 2000)
             })
@@ -237,6 +249,7 @@ const CreateBlogPage: FC = () => {
   return (
     <div className="prose p-4 flex flex-col gap-2 grow container mx-auto overflow-hidden">
       <CreateBlogHeader
+        editor={editor}
         genSlug={genSlug}
         setSlug={setSlug}
         setTitle={setTitle}

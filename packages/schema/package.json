@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "exports": {
-    "./*": "./src/*.schema.tsx"
+    "./*": "./src/*.schema.ts"
   },
   "scripts": {
     "build": "tsc"
