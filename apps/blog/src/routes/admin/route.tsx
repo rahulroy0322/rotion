@@ -18,10 +18,17 @@ const Route = createFileRoute('/admin')({
     context: {
       auth: { user },
     },
+    location,
   }) => {
-    if (!user) {
+    if (import.meta.env.PROD && !user) {
       throw redirect({
         to: '/',
+      })
+    }
+
+    if (location.href === '/admin' || location.href === '/admin/') {
+      throw redirect({
+        to: '/admin/blog/manage',
       })
     }
   },

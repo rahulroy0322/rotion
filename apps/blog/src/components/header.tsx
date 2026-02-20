@@ -166,22 +166,11 @@ const MobileNav: FC<NavPropsType> = ({ user }) => (
                 Logout
               </Button>
             </DropdownMenuItem>
-            {/* {
-                adminRoles.includes(user.role) ?
-                  <DropdownMenuItem >
-
-                    <Button
-                      render={
-                        <Link
-                          to='/admin'
-                        />
-                      }
-                    >
-                      Admin Panel
-                    </Button>
-                  </DropdownMenuItem>
-                  : null
-              } */}
+            {adminRoles.includes(user.role) ? (
+              <DropdownMenuItem>
+                <Button render={<Link to="/admin" />}>Admin Panel</Button>
+              </DropdownMenuItem>
+            ) : null}
           </DropdownMenuGroup>
         )}
       </DropdownMenuContent>

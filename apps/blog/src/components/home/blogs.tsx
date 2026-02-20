@@ -1,4 +1,5 @@
 import type { FC } from 'react'
+import type { BlogType } from 'schema/blog'
 import {
   Pagination,
   PaginationContent,
@@ -8,8 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from 'ui/ui/pagination'
-import type { BlogType } from '#/types'
-import { BlogCard } from './blogCard'
+import { BlogCard, BlogCardSkeleton } from './blogCard'
 
 type HomePageSectionPropsType = {
   blogs: BlogType[]
@@ -28,21 +28,21 @@ const HomePageSection: FC<HomePageSectionPropsType> = ({ blogs }) => (
     <ul className="grid md:grid-cols-3 gap-6">
       {blogs.map(
         ({
-          _id,
-          images,
-          author: { name, avatar },
-          desc,
+          // images,
+          // author: { name, avatar },
+          // desc,
           title,
           time,
           slug,
         }) => (
-          <li key={_id}>
+          <li key={slug}>
             <BlogCard
-              alt={images[0].alt}
-              avatarUrl={avatar}
+              // alt={images[0].alt}
+              avatarUrl={'/avatar.webp'}
               desc={desc}
-              heroImage={images[0].url}
-              name={name}
+              heroImage={'/write.jpg'}
+              // name={name}
+              name="bxaksjkan"
               slug={slug}
               time={time}
               title={title}
@@ -99,4 +99,29 @@ const HomePageSection: FC<HomePageSectionPropsType> = ({ blogs }) => (
   </section>
 )
 
-export { HomePageSection }
+const HomePageSectionSkeleton: FC = () => (
+  <section className="container p-2">
+    <h2 className="text-xl font-bold">Blogs</h2>
+    <h3 className="line-clamp-1">{desc}</h3>
+
+    {/* 
+// TODO!
+*/}
+    <div className="my-6">filters</div>
+
+    <ul className="grid md:grid-cols-3 gap-6">
+      {Array.from(
+        {
+          length: 3,
+        },
+        (_, i) => (
+          <li key={`${i.toString()}`}>
+            <BlogCardSkeleton />
+          </li>
+        )
+      )}
+    </ul>
+  </section>
+)
+
+export { HomePageSection, HomePageSectionSkeleton }
