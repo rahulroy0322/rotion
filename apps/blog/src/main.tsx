@@ -13,6 +13,7 @@ import { routeTree } from './routeTree.gen'
 
 import './index.css'
 import 'ui/index.css'
+import useAuth, { AuthContextProvider } from './context/auth'
 
 const queryContext = getContext()
 
@@ -20,8 +21,8 @@ const router = createRouter({
   routeTree,
   context: {
     ...queryContext,
-    // /biome-ignore lint/style/noNonNullAssertion: Trust me
-    // auth: undefined!,
+    // biome-ignore lint/style/noNonNullAssertion: Trust me
+    auth: undefined!,
   },
   defaultPreload: 'intent',
   scrollRestoration: true,
@@ -39,19 +40,12 @@ declare module '@tanstack/react-router' {
 }
 
 const App: FC = () => {
-  // const auth = useAuth()
-  // return (
-
+  const auth = useAuth()
   return (
     <RouterProvider
-      // context={{
-      //   auth,
-      // }}
-      // context={
-      //   {
-      //     _auth: ""
-      //   }
-      // }
+      context={{
+        auth,
+      }}
       router={router}
     />
   )
@@ -64,12 +58,10 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryProvider {...queryContext}>
-        {/* 
-        <AuthContextProvider> */}
-        <App />
+        <AuthContextProvider>
+          <App />
+        </AuthContextProvider>
       </QueryProvider>
-      {/* </AuthContextProvider>
-       */}
     </StrictMode>
   )
 }

@@ -3,28 +3,22 @@ import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import type { FC } from 'react'
 import { Toaster } from 'ui/ui/sonner'
-// import { Loading } from '@/components/app/loading'
-// import type { AuthContextType } from '@/context/auth'
-// import { ErrorPage } from '@/pages/error.page'
-// import { NotFoundPage } from '@/pages/not-found.page'
+import type { AuthContextType } from '#/context/auth'
+import { ErrorPage } from '#/pages/error.page'
+import { NotFoundPage } from '#/pages/not-found.page'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 type MyRouterContext = {
   client: QueryClient
-  // auth: AuthContextType
+  auth: AuthContextType
 }
 
-const Route = createRootRouteWithContext<MyRouterContext>()({
-  component: RootComponent,
-})
-
-function RootComponent() {
+const RootLayout: FC = () => {
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-100 to-blue-200 flex flex-col">
-      {/* <MainHeader /> */}
       <Outlet />
-      {/* <MainFooter /> */}
       <Toaster
         closeButton
         richColors
@@ -47,5 +41,11 @@ function RootComponent() {
     </div>
   )
 }
+
+const Route = createRootRouteWithContext<MyRouterContext>()({
+  component: RootLayout,
+  notFoundComponent: NotFoundPage,
+  errorComponent: ErrorPage,
+})
 
 export { Route }

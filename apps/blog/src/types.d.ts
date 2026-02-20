@@ -1,10 +1,11 @@
+import type { RegisterSchemaType } from 'schema/auth'
 // TODO!
 type CategoryType = {
   _id: string
   name: string
 }
 
-type UserType = {
+type AuthorType = {
   name: string
   avatar?: string
 }
@@ -22,10 +23,34 @@ type BlogType = {
   slug: string
   desc: string
   images: ImageType[]
-  author: UserType
+  author: AuthorType
   categories: CategoryType[]
   time: Date
   status: BlogStatusType
 }
 
-export type { CategoryType, BlogType, ImageType, BlogStatusType }
+type UserType = RegisterSchemaType & {
+  _id: string
+  role: 'user' | 'admin'
+}
+
+type SuccessType<T = Record<string, unknown>> = {
+  success: true
+  data: T
+}
+
+type ErrorType<E = Error> = {
+  success: false
+  error: E
+}
+
+type ResType<T = Record<string, unknown>> = SuccessType<T> | ErrorType
+
+export type {
+  CategoryType,
+  BlogType,
+  ImageType,
+  BlogStatusType,
+  UserType,
+  ResType,
+}
