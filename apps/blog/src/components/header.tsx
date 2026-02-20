@@ -28,6 +28,8 @@ import {
   SelectValue,
 } from 'ui/ui/select'
 import { Avatar } from '#/components/avatar'
+import { adminRoles } from '#/const/role'
+import useAuth, { type AuthContextType } from '#/context/auth'
 import { LogoText } from './logo'
 
 type LinkType = {
@@ -91,7 +93,11 @@ const languages = [
   { code: 'it', value: 'Italian' },
 ] as const satisfies LanguageType[]
 
-const MobileNav: FC = () => (
+type NavPropsType = {
+  user: AuthContextType['user']
+}
+
+const MobileNav: FC<NavPropsType> = ({ user }) => (
   <nav className="grid grid-cols-6 items-center gap-4">
     <Link to="/">
       <LogoText />
@@ -109,7 +115,9 @@ const MobileNav: FC = () => (
         <ListIcon className="size-6" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className={'w-[55vw] h-screen p-2'}>
+      <DropdownMenuContent
+        className={'w-[55vw] h-screen p-2 flex flex-col justify-between'}
+      >
         <DropdownMenuGroup>
           {links.map(({ link, value }) => (
             <DropdownMenuItem key={`${link}-${value}`}>
@@ -122,23 +130,65 @@ const MobileNav: FC = () => (
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>
-        <DropdownMenuGroup>
-          <Avatar
-            alt={user.name}
-            src={user.avatar}
-          />
-        </DropdownMenuGroup>
+        {!user ? (
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Button
+                render={<Link to="/login" />}
+                variant={'outline'}
+              >
+                Login
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Button render={<Link to="/register" />}>Register</Button>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        ) : (
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Avatar
+                alt={user.name}
+                // TODO!
+                // src={user.}
+                src={'/avatar.webp'}
+              />
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Button
+                render={
+                  <Link
+                    // TODO!
+                    to="/register"
+                  />
+                }
+              >
+                Logout
+              </Button>
+            </DropdownMenuItem>
+            {/* {
+                adminRoles.includes(user.role) ?
+                  <DropdownMenuItem >
+
+                    <Button
+                      render={
+                        <Link
+                          to='/admin'
+                        />
+                      }
+                    >
+                      Admin Panel
+                    </Button>
+                  </DropdownMenuItem>
+                  : null
+              } */}
+          </DropdownMenuGroup>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   </nav>
 )
-
-const user = {
-  name: 'Author Name',
-  avatar: '/avatar.webp',
-}
-
-const DesktopNav: FC = () => (
+const DesktopNav: FC<NavPropsType> = ({ user }) => (
   <>
     <nav className="flex items-center col-span-3 gap-6">
       <Link to="/">
@@ -182,57 +232,71 @@ const DesktopNav: FC = () => (
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Link to="/">
-        <Button variant={'outline'}>Login</Button>
-      </Link>
-      <Link to="/">
-        <Button>Register</Button>
-      </Link>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="ghost" />}>
-          <Avatar
-            alt={user.name}
-            src={user.avatar}
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuGroup>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuItem>{user.name}</DropdownMenuItem>
-            <DropdownMenuItem
-              className="w-full cursor-pointer"
-              render={<Link to="/" />}
-            >
-              <UserCircleIcon /> Profile
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </DropdownMenuGroup>
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              className="w-full"
-              render={
-                <Button
-                  size="lg"
-                  variant="destructive"
-                />
-              }
-            >
-              <SignOutIcon /> Logout
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {!user ? (
+        <>
+          <Link to="/">
+            <Button variant={'outline'}>Login</Button>
+          </Link>
+          <Link to="/">
+            <Button>Register</Button>
+          </Link>
+        </>
+      ) : (
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="ghost" />}>
+              <Avatar
+                alt={user.name}
+                // TODO!
+                // src={user.avatar}
+                src={'/avatar.webp'}
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuItem>{user.name}</DropdownMenuItem>
+                <DropdownMenuItem
+                  className="w-full cursor-pointer"
+                  render={<Link to="/" />}
+                >
+                  <UserCircleIcon /> Profile
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </DropdownMenuGroup>
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  className="w-full"
+                  render={
+                    <Button
+                      size="lg"
+                      variant="destructive"
+                    />
+                  }
+                >
+                  <SignOutIcon /> Logout
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {adminRoles.includes(user.role) ? (
+            <Button render={<Link to="/admin" />}>Admin Panel</Button>
+          ) : null}
+        </>
+      )}
     </div>
   </>
 )
 
 const MainHeader: FC = () => {
   const isMobile = useIsMobile()
+  const { user } = useAuth()
+
+  const Nav = isMobile ? MobileNav : DesktopNav
 
   return (
     <header className="p-2 container mx-auto grid-cols-7 gap-2 md:grid">
-      {isMobile ? <MobileNav /> : <DesktopNav />}
+      <Nav user={user} />
     </header>
   )
 }

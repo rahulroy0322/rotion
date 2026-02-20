@@ -1,13 +1,25 @@
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useRouteContext,
+} from '@tanstack/react-router'
 import { useAppForm } from 'form'
 import type { FC } from 'react'
 import { type LoginSchemaType, loginSchema } from 'schema/auth'
 import { Button } from 'ui/ui/button'
 import { FieldGroup } from 'ui/ui/field'
+import { toast } from 'ui/ui/sonner'
+import { login } from '#/api/auth'
 import { AuthForm } from '#/components/authForm'
 
 const LoginPage: FC = () => {
+  const { client } = useRouteContext({
+    from: '/(auth)/login',
+  })
+  const navigate = useNavigate()
+
   const form = useAppForm({
     defaultValues: {
       email: '',
@@ -22,30 +34,47 @@ const LoginPage: FC = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ['login', form.state.values.email],
 
-    mutationFn: async (_data: LoginSchemaType) => {
-      // todo!
-      // biome-ignore lint/suspicious/noConsole: temp
-      console.log('todo!')
+    mutationFn: async (formData: LoginSchemaType) => {
+      await new Promise((res, rej) => {
+        toast.promise(
+          async () =>
+            new Promise(async (res, rej) => {
+              try {
+                const data = await login(formData)
 
-      // toast.promise(login(data), {
-      // 	loading: 'Login...',
-      // 	success: () => {
-      // 		navigate({
-      // 			to: '/',
-      // 		})
-      // 		client.invalidateQueries({
-      // 			queryKey: ['auth'],
-      // 		})
-      // 		return 'Login succesfully'
-      // 	},
-      // 	error: (e) => {
-      // 		if ('message' in e) {
-      // 			return e.message
-      // 		}
+                if (!data) {
+                  throw new Error('Something went wrong!')
+                }
 
-      // 		return 'SomeThing went wrong'
-      // 	},
-      // })
+                res(data)
+              } catch (e) {
+                rej(e)
+              }
+            }),
+          {
+            loading: 'Login...',
+            success: (data) => {
+              res(data)
+              navigate({
+                to: '/',
+              })
+              client.invalidateQueries({
+                queryKey: ['auth'],
+              })
+              return 'Login succesfully'
+            },
+            error: (e) => {
+              rej(e)
+              return (
+                <div>
+                  <b>Error: </b>
+                  <span>{e?.message ?? 'SomeThing went wrong'}</span>
+                </div>
+              )
+            },
+          }
+        )
+      })
     },
   })
 

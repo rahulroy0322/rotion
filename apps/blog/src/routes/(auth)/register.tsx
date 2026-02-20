@@ -1,14 +1,26 @@
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useRouteContext,
+} from '@tanstack/react-router'
 import { useAppForm } from 'form'
 import type { FC } from 'react'
 import { type RegisterSchemaType, registerSchema } from 'schema/auth'
 import { Button } from 'ui/ui/button'
 import { FieldGroup } from 'ui/ui/field'
+import { toast } from 'ui/ui/sonner'
+import { register } from '#/api/auth'
 import { AuthForm } from '#/components/authForm'
 import { LogoText } from '#/components/logo'
 
 const RegisterPage: FC = () => {
+  const { client } = useRouteContext({
+    from: '/(auth)/register',
+  })
+  const navigate = useNavigate()
+
   const form = useAppForm({
     defaultValues: {
       name: '',
@@ -24,29 +36,47 @@ const RegisterPage: FC = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ['register', form.state.values.email],
 
-    mutationFn: async (_data: RegisterSchemaType) => {
-      // todo!
-      // biome-ignore lint/suspicious/noConsole: temp
-      console.log('todo!')
-      // toast.promise(register(data), {
-      // 				loading: 'Registering...',
-      // 				success: () => {
-      // 					navigate({
-      // 						to: '/',
-      // 					})
-      // 					client.invalidateQueries({
-      // 						queryKey: ['auth'],
-      // 					})
-      // 					return 'Regiseter succesfully'
-      // 				},
-      // 				error: (e) => {
-      // 					if ('message' in e) {
-      // 						return e.message
-      // 					}
+    mutationFn: async (formData: RegisterSchemaType) => {
+      await new Promise((res, rej) => {
+        toast.promise(
+          async () =>
+            new Promise(async (res, rej) => {
+              try {
+                const data = await register(formData)
 
-      // 					return 'SomeThing went wrong'
-      // 				},
-      // 			})
+                if (!data) {
+                  throw new Error('Something went wrong!')
+                }
+
+                res(data)
+              } catch (e) {
+                rej(e)
+              }
+            }),
+          {
+            loading: 'Registering...',
+            success: (data) => {
+              res(data)
+              navigate({
+                to: '/',
+              })
+              client.invalidateQueries({
+                queryKey: ['auth'],
+              })
+              return 'Regiseter succesfully'
+            },
+            error: (e) => {
+              rej(e)
+              return (
+                <div>
+                  <b>Error: </b>
+                  <span>{e?.message ?? 'SomeThing went wrong'}</span>
+                </div>
+              )
+            },
+          }
+        )
+      })
     },
   })
 
