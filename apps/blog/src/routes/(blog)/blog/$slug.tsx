@@ -12,6 +12,7 @@ import { Image } from '#/components/image'
 import { Main } from '#/components/main'
 import type { ImageType } from '#/types'
 import '#/routes/admin/blog/create.css'
+import { KEYS } from '#/keys/query'
 
 const images = [
   {
@@ -109,7 +110,7 @@ const BlogPageImpl: FC = () => {
   const navigate = useNavigate()
   const { slug } = useParams()
   const { data: blog } = useSuspenseQuery({
-    queryKey: ['blog', slug],
+    queryKey: [...KEYS.blog, slug],
     queryFn: () => getBlog(slug),
   })
 

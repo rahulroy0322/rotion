@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createContext, type FC, type ReactNode, use, useEffect } from 'react'
 import { toast } from 'ui/ui/sonner'
 import { BASE_URL } from '#/const/url'
+import { KEYS } from '#/keys/query'
 import { getToken } from '#/lib/token'
 import type { ResType, UserType } from '#/types'
 
@@ -64,7 +65,7 @@ const AuthContextProvider: FC<AuthContextProviderPropsType> = ({
   } = useQuery({
     initialData: null,
 
-    queryKey: ['auth'],
+    queryKey: KEYS.auth,
 
     queryFn: fetchUser,
   })

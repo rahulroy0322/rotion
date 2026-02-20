@@ -16,6 +16,7 @@ import {
 } from 'ui/ui/select'
 import { getBlogs } from '#/api/blog'
 import { Image } from '#/components/image'
+import { KEYS } from '#/keys/query'
 import { timeFormat } from '#/utils/time'
 import { toast } from '@/components/ui/sonner'
 
@@ -117,9 +118,9 @@ const ManagePageImpl: FC<ManagePageImplPropsType> = ({ blogs }) => {
                     <h2 className="text-lg font-bold">{title}</h2>
                     <time
                       className="text-xs text-muted-foreground"
-                      dateTime={time.toString()}
+                      dateTime={time?.toString()}
                     >
-                      {timeFormat(time)}
+                      {timeFormat(time || '')}
                     </time>
                   </div>
                 </Link>
@@ -145,7 +146,7 @@ const Route = createFileRoute('/admin/blog/manage')({
   loader: async ({ context: { client } }) => {
     try {
       return await client.fetchQuery({
-        queryKey: ['tournaments'],
+        queryKey: KEYS.blogs,
         queryFn: getBlogs,
       })
     } catch (e) {

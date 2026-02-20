@@ -14,6 +14,7 @@ import { toast } from 'ui/ui/sonner'
 import { register } from '#/api/auth'
 import { AuthForm } from '#/components/authForm'
 import { LogoText } from '#/components/logo'
+import { KEYS } from '#/keys/query'
 
 const RegisterPage: FC = () => {
   const { client } = useRouteContext({
@@ -34,7 +35,7 @@ const RegisterPage: FC = () => {
   })
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ['register', form.state.values.email],
+    mutationKey: [...KEYS.auth, form.state.values.email],
 
     mutationFn: async (formData: RegisterSchemaType) => {
       await new Promise((res, rej) => {
@@ -61,7 +62,7 @@ const RegisterPage: FC = () => {
                 to: '/',
               })
               client.invalidateQueries({
-                queryKey: ['auth'],
+                queryKey: KEYS.auth,
               })
               return 'Regiseter succesfully'
             },

@@ -1,4 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  useNavigate,
+  useRouteContext,
+} from '@tanstack/react-router'
 
 import { TextStyleKit } from '@tiptap/extension-text-style'
 import { type Editor, EditorContent, useEditor } from '@tiptap/react'
@@ -27,7 +31,9 @@ import {
 } from 'ui/ui/drawer'
 import { Input } from 'ui/ui/input'
 import { toast } from 'ui/ui/sonner'
+import { createBlog } from '#/api/blog'
 import { BlogBubbleMenu, BlogMainMenu } from '#/components/editor/menu'
+import { KEYS } from '#/keys/query'
 
 const extensions = [TextStyleKit, StarterKit]
 
@@ -50,8 +56,12 @@ const CreateBlogHeader: FC<CreateBlogHeaderPropsType> = ({
   setSlug,
   editor,
 }) => {
+  const navigate = useNavigate()
+  const { client } = useRouteContext({
+    from: '/admin/blog/create',
+  })
   const { mutate: save, isPending: isSavePending } = useMutation({
-    mutationKey: ['blogs', title],
+    mutationKey: [...KEYS.blogs, title],
     mutationFn: async () => {
       await new Promise((res, rej) => {
         toast.promise(
@@ -68,17 +78,34 @@ const CreateBlogHeader: FC<CreateBlogHeaderPropsType> = ({
               throw parsed.error
             }
 
-            return new Promise((res, rej) => {
-              setTimeout(Math.random() > 0.5 ? res : rej, 2000)
+            return new Promise(async (res, rej) => {
+              try {
+                const data = await createBlog(parsed.data)
+
+                if (!data) {
+                  throw new Error('Something went wrong!')
+                }
+
+                res(data)
+              } catch (e) {
+                rej(e)
+              }
             })
           },
           {
             loading: 'Saving Blog...',
             success: () => {
               res({})
+              navigate({
+                href: '/admin',
+              })
+
+              client.invalidateQueries({
+                queryKey: KEYS.blogs,
+              })
               return 'Blog Save Successfully'
             },
-            error: (e) => {
+            error: (e: Error) => {
               rej(e)
               return (
                 <div>
@@ -176,7 +203,7 @@ const CreateBlogSettings: FC<CreateBlogSettingsPropsType> = ({
 )
 
 const CreateBlogPage: FC = () => {
-  const [title, setTitle] = useState('this is My Fisrt Blog')
+  const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
 
   const genSlug = () => {
@@ -185,65 +212,7 @@ const CreateBlogPage: FC = () => {
 
   const editor = useEditor({
     extensions,
-
-    // editable: false,
-
-    content: `
-<h2>
-  Hi there,
-</h2>
-<hr/>
-<p>
-  this is a <em>basic</em> example of <strong>Tiptap</strong>. Sure, there are all kind of basic text styles you'd probably expect from a text editor. But wait until you see the lists:
-</p>
-<ul>
-  <li>
-    That's a bullet list with one …
-  </li>
-  <li>
-    … or two list items.
-  </li>
-</ul>
-<ul>
-  <li>
-    That's a bullet list with one …
-  </li>
-  <li>
-    … or two list items.
-  </li>
-</ul><ul>
-  <li>
-    That's a bullet list with one …
-  </li>
-  <li>
-    … or two list items.
-  </li>
-</ul><ul>
-  <li>
-    That's a bullet list with one …
-  </li>
-  <li>
-    … or two list items.
-  </li>
-</ul>
-<ol>
-<li>axvhghsaj</li>
-</ol>
-<p>
-  Isn't that great? And all of that is editable. But wait, there's more. Let's try a code block:
-</p>
-<pre><code>body {
-  display: none;
-}</code></pre>
-<p>
-  I know, I know, this is impressive. It's only the tip of the iceberg though. Give it a try and click a little bit around. Don't forget to check the other examples too.
-</p>
-<blockquote>
-  Wow, that's amazing. Good work, boy! 👏
-  <br />
-  — Mom
-</blockquote>
-`,
+    content: '',
   })
 
   return (
@@ -260,7 +229,7 @@ const CreateBlogPage: FC = () => {
       <BlogMainMenu editor={editor} />
       <BlogBubbleMenu editor={editor} />
       <EditorContent
-        className="grow overflow-auto"
+        className="grow overflow-auto outline"
         editor={editor}
       />
     </div>

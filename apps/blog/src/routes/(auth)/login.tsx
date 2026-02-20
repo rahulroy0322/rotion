@@ -13,6 +13,7 @@ import { FieldGroup } from 'ui/ui/field'
 import { toast } from 'ui/ui/sonner'
 import { login } from '#/api/auth'
 import { AuthForm } from '#/components/authForm'
+import { KEYS } from '#/keys/query'
 
 const LoginPage: FC = () => {
   const { client } = useRouteContext({
@@ -32,7 +33,7 @@ const LoginPage: FC = () => {
   })
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ['login', form.state.values.email],
+    mutationKey: [...KEYS.auth, form.state.values.email],
 
     mutationFn: async (formData: LoginSchemaType) => {
       await new Promise((res, rej) => {
@@ -59,7 +60,7 @@ const LoginPage: FC = () => {
                 to: '/',
               })
               client.invalidateQueries({
-                queryKey: ['auth'],
+                queryKey: KEYS.auth,
               })
               return 'Login succesfully'
             },

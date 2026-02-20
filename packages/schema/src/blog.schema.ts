@@ -9,9 +9,10 @@ const blogSchema = z.object({
   //images: ImageType[]
   //  author: UserType
   //     categories: CategoryType[]
-  time: z.iso
-    .date('Time must be a date')
-    .default(() => new Date().toDateString()),
+  time: z
+    .string()
+    .default(() => new Date().toDateString())
+    .transform((v) => v || undefined),
   status: z.enum(blogStatus).default('draft'),
 })
 

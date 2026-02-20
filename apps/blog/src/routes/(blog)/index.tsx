@@ -12,10 +12,11 @@ import {
   HomePageHeroSectionSkeleton,
 } from '#/components/home/hero'
 import { Main } from '#/components/main'
+import { KEYS } from '#/keys/query'
 
 const HomePageImpl: FC = () => {
   const { data: blogs } = useSuspenseQuery({
-    queryKey: ['blogs'],
+    queryKey: KEYS.blogs,
     queryFn: getBlogs,
   })
   return (
