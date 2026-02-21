@@ -4,12 +4,8 @@ import {
   EyeIcon,
   PencilIcon,
 } from '@phosphor-icons/react'
-import {
-  createFileRoute,
-  Link,
-  redirect,
-  useLoaderData,
-} from '@tanstack/react-router'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { type FC, useState } from 'react'
 import type { BlogStatusType, BlogType } from 'schema/blog'
 import {
@@ -23,6 +19,8 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type OnChangeFn,
+  type PaginationState,
   type SortingState,
   useReactTable,
 } from 'ui/components/app/data.table.tsx'
@@ -31,8 +29,8 @@ import { Button } from 'ui/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from 'ui/ui/card'
 import { Checkbox } from 'ui/ui/checkbox'
 import { Popover, PopoverContent, PopoverTrigger } from 'ui/ui/popover'
-import { toast } from 'ui/ui/sonner'
 import { getBlogs } from '#/api/blog'
+import { Loading } from '#/components/loading'
 import { KEYS } from '#/keys/query'
 import { timeFormat } from '#/utils/time'
 
@@ -193,10 +191,20 @@ const columns: ColumnDef<BlogType>[] = [
   },
 ]
 
-const ManagePage: FC = () => {
-  const blogs = useLoaderData({
-    from: '/admin/blog/manage',
-  })
+type ManagePageImplPropsType = {
+  data: BlogType[]
+  pages: number
+  total: number
+  pagination: PaginationState
+  onPaginationChange: OnChangeFn<PaginationState>
+}
+
+const ManagePageImpl: FC<ManagePageImplPropsType> = ({
+  data,
+  pages,
+  pagination,
+  onPaginationChange,
+}) => {
   const [sorting, onSortingChange] = useState<SortingState>([])
   const [globalFilter, onGlobalFilterChange] = useState('')
   const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>(
@@ -204,7 +212,7 @@ const ManagePage: FC = () => {
   )
 
   const table = useReactTable<BlogType>({
-    data: blogs,
+    data,
     columns,
     enableRowSelection: (row) => !!row.original._id,
     getCoreRowModel: getCoreRowModel(),
@@ -212,26 +220,20 @@ const ManagePage: FC = () => {
     onSortingChange,
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange,
-    // manualPagination: true,
-    // onPaginationChange,
-    // pageCount: 50,
+    manualPagination: true,
+    onPaginationChange,
+    pageCount: pages,
     state: {
       sorting,
       globalFilter,
       columnFilters,
-      // pagination,
+      pagination,
     },
     // filterFns: {
     //   inDateRange,
     // },
     onColumnFiltersChange,
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 50,
-      },
-    },
   })
 
   return (
@@ -255,21 +257,52 @@ const ManagePage: FC = () => {
   )
 }
 
+const ManagePage: FC = () => {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
+  const { error, isLoading, data } = useQuery({
+    queryKey: [...KEYS.blogs, pagination],
+    queryFn: () =>
+      getBlogs({
+        limit: pagination.pageSize,
+        page: pagination.pageIndex + 1,
+      }),
+    placeholderData: keepPreviousData,
+  })
+
+  if (isLoading) {
+    return <Loading />
+  }
+
+  if (error) {
+    throw error
+  }
+
+  if (!data) {
+    throw new Error('blogs is not defined')
+  }
+
+  const {
+    blogs,
+    items: { pages, total },
+  } = data
+
+  return (
+    <ManagePageImpl
+      data={blogs}
+      onPaginationChange={setPagination}
+      pages={pages}
+      pagination={pagination}
+      total={total}
+    />
+  )
+}
+
 const Route = createFileRoute('/admin/blog/manage')({
   component: ManagePage,
-  loader: async ({ context: { client } }) => {
-    try {
-      return await client.fetchQuery({
-        queryKey: KEYS.blogs,
-        queryFn: getBlogs,
-      })
-    } catch (e) {
-      toast.error(`Error: fetching blogs ${(e as Error).toString()}`)
-      throw redirect({
-        href: '/',
-      })
-    }
-  },
 })
 
 export { Route }

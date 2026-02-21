@@ -22,7 +22,7 @@ const Route = createFileRoute('/admin')({
   }) => {
     if (import.meta.env.PROD && !user) {
       throw redirect({
-        to: '/',
+        to: '/login',
       })
     }
 

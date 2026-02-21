@@ -1,6 +1,6 @@
 'use no memo'
 
-import { type Column, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type Table as ReactTable, type SortingState, useReactTable } from '@tanstack/react-table'
+import { type Column, type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, type OnChangeFn, type PaginationState, type Table as ReactTable, type SortingState, useReactTable } from '@tanstack/react-table'
 import type { HTMLAttributes, ReactNode } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
@@ -244,6 +244,8 @@ export type {
     SortingState,
     ColumnDef,
     ColumnFiltersState,
+    PaginationState,
+    OnChangeFn
 }
 
 export {

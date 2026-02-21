@@ -46,7 +46,8 @@
           "options": {
             "allow": [
               "error",
-              "warn"
+              "warn",
+              "assert"
             ]
           },
           "level": "error"

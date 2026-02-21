@@ -6,6 +6,7 @@ import {
 import type * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import type { FC } from 'react'
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
@@ -41,34 +42,44 @@ function PaginationItem({ ...props }: React.ComponentProps<'li'>) {
   )
 }
 
-type PaginationLinkProps = {
+type PaginationLinkProps = Parameters<typeof Button>[0] & {
   isActive?: boolean
-} & Pick<React.ComponentProps<typeof Button>, 'size'> &
-  React.ComponentProps<'a'>
-
-function PaginationLink({
-  className,
-  isActive,
-  size = 'icon',
-  ...props
-}: PaginationLinkProps) {
-  return (
-    <Button
-      className={cn(className)}
-      nativeButton={false}
-      render={
-        <a
-          aria-current={isActive ? 'page' : undefined}
-          data-active={isActive}
-          data-slot="pagination-link"
-          {...props}
-        />
-      }
-      size={size}
-      variant={isActive ? 'outline' : 'ghost'}
-    />
-  )
+  render: Pick<Parameters<typeof Button>[0], 'render'>
 }
+//  {
+//   isActive?: boolean
+// } & Pick<React.ComponentProps<typeof Button>, 'size'> &
+//   React.ComponentProps<'a'>
+
+const PaginationLink: FC<PaginationLinkProps> = ({ isActive, ...props }) => <Button
+  {...props}
+  variant={isActive ? 'outline' : 'ghost'}
+  nativeButton={false}
+/>
+
+// function PaginationLink({
+//   className,
+//   isActive,
+//   size = 'icon',
+//   ...props
+// }: PaginationLinkProps) {
+//   return (
+//     <Button
+//       className={cn(className)}
+//       nativeButton={false}
+//       render={
+//         <a
+//           aria-current={isActive ? 'page' : undefined}
+//           data-active={isActive}
+//           data-slot="pagination-link"
+//           {...props}
+//         />
+//       }
+//       size={size}
+//       variant={isActive ? 'outline' : 'ghost'}
+//     />
+//   )
+// }
 
 function PaginationPrevious({
   className,

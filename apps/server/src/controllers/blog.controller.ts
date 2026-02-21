@@ -38,7 +38,7 @@ const getPublishedBlogsController: RequestHandler = async (req, res) => {
 
   const { limit, page } = parsed.data
 
-  const skip = limit * (page - 1)
+  const skip = Math.max(limit * (page - 1), 0)
 
   const [blogs, total = 0] = await Promise.all([
     getAllBlogs(filter, {
@@ -55,7 +55,7 @@ const getPublishedBlogsController: RequestHandler = async (req, res) => {
       items: {
         total,
         current: blogs.length,
-        pages: Math.ceil(total / blogs.length),
+        pages: Math.ceil(total / limit),
       },
     },
   } satisfies ResType)

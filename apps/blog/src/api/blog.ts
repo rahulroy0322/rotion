@@ -35,16 +35,26 @@ const post = async <T>(route: string, body: Partial<BlogType>) =>
 const patch = async <T>(route: string, body: Partial<BlogType>) =>
   await req<T>(route, 'PATCH', JSON.stringify(body))
 
-const getBlogs = async () => {
+const getBlogs = async (
+  { limit, page } = {
+    limit: 10,
+    page: 1,
+  }
+) => {
   const data = await get<{
     blogs: BlogType[]
-  }>('blog')
+    items: {
+      total: number
+      current: number
+      pages: number
+    }
+  }>(`blog?limit=${limit}&page=${page}`)
 
   if (!data.success) {
     throw data.error
   }
 
-  return data.data.blogs
+  return data.data
 }
 
 const createBlog = async (blog: BlogSchemaType) => {

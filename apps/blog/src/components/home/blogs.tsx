@@ -1,4 +1,5 @@
-import type { FC } from 'react'
+import { Link } from '@tanstack/react-router'
+import { type FC, Fragment, useMemo } from 'react'
 import type { BlogType } from 'schema/blog'
 import {
   Pagination,
@@ -11,14 +12,144 @@ import {
 } from 'ui/ui/pagination'
 import { BlogCard, BlogCardSkeleton } from './blogCard'
 
-type HomePageSectionPropsType = {
-  blogs: BlogType[]
-}
-
 const desc =
   'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quidem consequatur est quaerat exercitationem officiis at itaque vero totam odio possimus placeat ut explicabo distinctio id'
 
-const HomePageSection: FC<HomePageSectionPropsType> = ({ blogs }) => (
+type PaginationType =
+  | {
+      page: number
+    }
+  | {
+      elepsis: true
+    }
+
+type HomePagePaginationsPropsType = {
+  pages: number
+  currentPage: number
+}
+
+const HomePagePaginations: FC<HomePagePaginationsPropsType> = ({
+  pages,
+  currentPage,
+}) => {
+  const paginations = useMemo((): PaginationType[] => {
+    if (pages < 6) {
+      return Array.from(
+        {
+          length: pages,
+        },
+        (_, i) =>
+          ({
+            page: i + 1,
+          }) satisfies PaginationType
+      )
+    }
+
+    const isCuurentElepsis = currentPage > 2 && currentPage < pages - 1
+
+    if (isCuurentElepsis) {
+      return [
+        {
+          elepsis: true,
+        },
+        {
+          page: currentPage - 1,
+        },
+        {
+          page: currentPage,
+        },
+        {
+          elepsis: true,
+        },
+        {
+          page: pages,
+        },
+      ]
+    }
+
+    return [
+      {
+        page: 1,
+      },
+      {
+        page: 2,
+      },
+      {
+        elepsis: true,
+      },
+      {
+        page: pages - 1,
+      },
+      {
+        page: pages,
+      },
+    ]
+  }, [pages, currentPage])
+
+  console.assert(
+    paginations.length < 6,
+    'some event does not handled properly as paginations is too big',
+    paginations
+  )
+
+  return (
+    <Pagination className="mt-2">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            render={
+              <Link
+                disabled={currentPage === 1}
+                to="/"
+              />
+            }
+          />
+        </PaginationItem>
+
+        {paginations.map((item, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: i take res
+          <Fragment key={i}>
+            {'page' in item ? (
+              <PaginationItem>
+                <PaginationLink
+                  isActive={item.page === currentPage}
+                  render={<Link to="/" />}
+                >
+                  {item.page}
+                </PaginationLink>
+              </PaginationItem>
+            ) : (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+          </Fragment>
+        ))}
+
+        <PaginationItem>
+          <PaginationNext
+            render={
+              <Link
+                disabled={currentPage === pages}
+                to="/"
+              />
+            }
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  )
+}
+
+type HomePageSectionPropsType = {
+  blogs: BlogType[]
+} & HomePagePaginationsPropsType
+
+const HomePageSection: FC<HomePageSectionPropsType> = ({
+  blogs,
+  pages,
+  currentPage,
+}) => (
   <section className="container p-2">
     <h2 className="text-xl font-bold">Blogs</h2>
     <h3 className="line-clamp-1">{desc}</h3>
@@ -55,50 +186,10 @@ const HomePageSection: FC<HomePageSectionPropsType> = ({ blogs }) => (
       )}
     </ul>
 
-    <Pagination className="mt-2">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            size={undefined}
-          />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink
-            href="#"
-            size={undefined}
-          >
-            1
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink
-            href="#"
-            isActive
-            size={undefined}
-          >
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink
-            href="#"
-            size={undefined}
-          >
-            3
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext
-            href="#"
-            size={undefined}
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+    <HomePagePaginations
+      currentPage={currentPage}
+      pages={pages}
+    />
   </section>
 )
 
