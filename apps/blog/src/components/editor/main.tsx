@@ -216,10 +216,10 @@ const BlogUpdateAction: FC<BlogUpdateActionPropsType> = ({
     fn={(blog) => updateBlog(slug, blog)}
     getBlogFromData={getBlogFromData}
     Icon={UploadIcon}
-    loading="Pulishing Blog..."
+    loading="Updateing Blog..."
     mutationKey={[...KEYS.blogs, title]}
     redirect={false}
-    success="Blog Published Successfully"
+    success="Blog Updated Successfully"
   />
 )
 
