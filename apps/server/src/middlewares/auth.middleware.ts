@@ -1,76 +1,57 @@
-// import type { RequestHandler } from 'express';
-// import { TokenExpiredError } from 'jsonwebtoken';
-// import type { RoleType } from '../const/role.const';
-// import {
-//   BadError,
-//   ExpiredError,
-//   ForbidenError,
-//   ServerError,
-//   UnAuthenticatedError,
-// } from '../error/app.error';
-// import { getUserById } from '../services/auth';
-// import { verifyToken } from '../utils/token';
+import type { RequestHandler } from 'express'
+import type { AuthenticateCallback } from 'passport'
+import type { RoleType } from 'schema/role'
+import { auth } from '../auth/main'
+import {
+  ForbidenError,
+  ServerError,
+  UnAuthenticatedError,
+} from '../error/app.error'
 
-// const authRequired: RequestHandler = (req, _res, next) => {
-//   const token = (
-//     req.headers.Authorization ||
-//     req.headers.authorization ||
-//     req.headers['x-Authorization'] ||
-//     req.headers['x-authorization'] ||
-//     req.headers.token ||
-//     req.headers['x-token'] ||
-//     ''
-//   )
-//     .toString()
-//     .split(' ')[1];
+const checkAuth: RequestHandler = (req, res, next) =>
+  auth.authenticate(
+    'jwt',
+    {
+      session: false,
+    },
+    ((_err, user) => {
+      req.user = user || undefined
+      next()
+    }) satisfies AuthenticateCallback
+  )(req, res, next)
 
-//   if (!token) {
-//     throw new UnAuthenticatedError('You have to login first!');
-//   }
+const authRequired: RequestHandler = async (req, _res, next) => {
+  if (!req.user) {
+    throw new UnAuthenticatedError('Login to access!')
+  }
 
-//   try {
-//     const { _id } = verifyToken(token);
-//     // TODO! check for baned
-//     req.userId = _id;
-//     return next();
-//   } catch (e) {
-//     if (e instanceof TokenExpiredError) {
-//       throw new ExpiredError(
-//         'your session had expired now you have to login again!'
-//       );
-//     }
+  // TODO! check cache!
+  // const user = await getUserById(req.userId);
 
-//     throw new BadError('failed To vaify token!', e);
-//   }
-// };
+  // if (!user) {
+  //     // res.status(401);
+  //     // Todo!
+  //     // logger.error({ user, userId: req.userId }, 'User Not found!');
 
-// const roleRequired = (roles: RoleType[]) => {
-//   return (async (req, _res, next) => {
-//     if (!req.userId) {
-//       throw new ServerError("some event dosn't handled properly!");
-//     }
+  //     throw new UnAuthenticatedError('Your account had been deleted!');
+  // }
 
-//     // TODO! check cache!
-//     const user = await getUserById(req.userId);
+  next()
+}
 
-//     if (!user) {
-//       // res.status(401);
-//       // Todo!
-//       // logger.error({ user, userId: req.userId }, 'User Not found!');
+const roleRequired = (roles: RoleType[]) => {
+  return (async (req, _res, next) => {
+    const user = req.user
+    if (!user) {
+      throw new ServerError("some event dosn't handled properly!", {
+        user: 'undefined',
+      })
+    }
 
-//       throw new UnAuthenticatedError('Your account had been deleted!');
-//     }
-
-//     if (!roles.includes(user.role)) {
-//       // res.status(403);
-//       // Todo!
-//       throw new ForbidenError("You Don't Sufficient permition");
-//     }
-
-//     req.user = user;
-
-//     next();
-//   }) satisfies RequestHandler;
-// };
-
-// export { roleRequired, authRequired };
+    if (!roles.includes(user.role)) {
+      throw new ForbidenError("You Don't Sufficient permition")
+    }
+    next()
+  }) satisfies RequestHandler
+}
+export { checkAuth, authRequired, roleRequired }

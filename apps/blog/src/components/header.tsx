@@ -7,6 +7,7 @@ import {
 } from '@phosphor-icons/react'
 import { Link } from '@tanstack/react-router'
 import type { FC } from 'react'
+import { adminRoles } from 'schema/role'
 import { useIsMobile } from 'ui/hooks/use-is-mobile.ts'
 import { Button } from 'ui/ui/button'
 import {
@@ -28,7 +29,6 @@ import {
   SelectValue,
 } from 'ui/ui/select'
 import { Avatar } from '#/components/avatar'
-import { adminRoles } from '#/const/role'
 import useAuth, { type AuthContextType } from '#/context/auth'
 import { LogoText } from './logo'
 
@@ -185,7 +185,7 @@ const DesktopNav: FC<NavPropsType> = ({ user }) => (
       </Link>
       <ul className="flex items-center gap-4">
         {links.map(({ link, value }) => (
-          <li key={link}>
+          <li key={`${link}-${value}`}>
             <Link
               className="hover:underline"
               to={link}
@@ -224,12 +224,18 @@ const DesktopNav: FC<NavPropsType> = ({ user }) => (
       {!user ? (
         <>
           <Button
+            nativeButton={false}
             render={<Link to="/login" />}
             variant={'outline'}
           >
             Login
           </Button>
-          <Button render={<Link to="/register" />}>Register</Button>
+          <Button
+            nativeButton={false}
+            render={<Link to="/register" />}
+          >
+            Register
+          </Button>
         </>
       ) : (
         <>
@@ -270,7 +276,12 @@ const DesktopNav: FC<NavPropsType> = ({ user }) => (
             </DropdownMenuContent>
           </DropdownMenu>
           {adminRoles.includes(user.role) ? (
-            <Button render={<Link to="/admin" />}>Admin Panel</Button>
+            <Button
+              nativeButton={false}
+              render={<Link to="/admin" />}
+            >
+              Admin Panel
+            </Button>
           ) : null}
         </>
       )}

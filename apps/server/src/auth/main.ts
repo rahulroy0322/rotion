@@ -23,7 +23,9 @@ auth.use(
         const user = await getUserById(_id)
 
         if (!user) {
-          return done(null, false)
+          return done(null, false, {
+            msg: 'user not found',
+          })
         }
         done(null, user)
       } catch (e) {

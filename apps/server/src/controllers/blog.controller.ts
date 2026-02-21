@@ -1,5 +1,6 @@
 import type { RequestHandler } from 'express'
 import { blogSchema } from 'schema/blog'
+import { adminRoles, type RoleType } from 'schema/role'
 import type { ResType } from '../@types/res'
 import {
   ConflictError,
@@ -9,11 +10,18 @@ import {
 } from '../error/app.error'
 import { createBlog, findBlog, getAllBlogs } from '../services/blog'
 
-const getPublishedBlogsController: RequestHandler = async (_req, res) => {
-  const blogs =
-    (await getAllBlogs({
-      status: 'published',
-    })) || []
+const getPublishedBlogsController: RequestHandler = async (req, res) => {
+  let filter: Parameters<typeof getAllBlogs>[0] = {
+    status: 'published',
+  }
+
+  if (req.user) {
+    if ((adminRoles as RoleType[]).includes(req.user.role)) {
+      filter = {}
+    }
+  }
+
+  const blogs = (await getAllBlogs(filter)) || []
 
   res.status(200).json({
     success: true,
@@ -47,6 +55,11 @@ const getPublishedBlogBySlugController: RequestHandler<{
 }
 
 const createBlogController: RequestHandler = async (req, res) => {
+  const user = req.user
+  if (!user) {
+    throw new ServerError("some event dosn't handled properly!")
+  }
+
   const parsed = blogSchema.safeParse(req.body || {})
 
   if (!parsed.success) {
@@ -72,6 +85,7 @@ const createBlogController: RequestHandler = async (req, res) => {
     throw new ConflictError('blog already exists!')
   }
 
+  // TODo! ADD  author
   const blog = await createBlog(data)
 
   if (!blog) {

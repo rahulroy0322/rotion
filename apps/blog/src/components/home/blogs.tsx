@@ -27,15 +27,18 @@ const HomePageSection: FC<HomePageSectionPropsType> = ({ blogs }) => (
 
     <ul className="grid md:grid-cols-3 gap-6">
       {blogs.map(
-        ({
-          // images,
-          // author: { name, avatar },
-          // desc,
-          title,
-          time,
-          slug,
-        }) => (
-          <li key={slug}>
+        (
+          {
+            // images,
+            // author: { name, avatar },
+            // desc,
+            title,
+            time,
+            slug,
+          },
+          i
+        ) => (
+          <li key={slug || i}>
             <BlogCard
               // alt={images[0].alt}
               avatarUrl={'/avatar.webp'}
@@ -44,7 +47,7 @@ const HomePageSection: FC<HomePageSectionPropsType> = ({ blogs }) => (
               // name={name}
               name="bxaksjkan"
               slug={slug}
-              time={time}
+              time={time || ''}
               title={title}
             />
           </li>

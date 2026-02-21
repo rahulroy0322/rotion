@@ -4,13 +4,23 @@ import {
   getPublishedBlogBySlugController,
   getPublishedBlogsController,
 } from '../controllers/blog.controller'
+import {
+  authRequired,
+  checkAuth,
+  roleRequired,
+} from '../middlewares/auth.middleware'
 
 const blogRouter: Router = Router()
 
 blogRouter
   .route('/')
-  .get(getPublishedBlogsController)
-  .post(createBlogController)
+  .get(checkAuth, getPublishedBlogsController)
+  .post(
+    checkAuth,
+    authRequired,
+    roleRequired(['admin', 'super']),
+    createBlogController
+  )
 
 blogRouter.route('/:slug').get(getPublishedBlogBySlugController)
 // .post(createBlogController)

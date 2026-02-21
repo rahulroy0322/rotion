@@ -162,17 +162,20 @@ const HomePageHeroSection: FC<HomePageHeroSectionPropsType> = ({
   >
     <CarouselContent className="aspect-video md:aspect-20/9 lg:aspect-10/3">
       {topBlogs.map(
-        ({
-          title,
-          // con,
-          // images,
-          // author: { avatar, name },
-          // categories,
-          // content,
-          slug,
-          // status,
-          time,
-        }) => {
+        (
+          {
+            title,
+            // con,
+            // images,
+            // author: { avatar, name },
+            // categories,
+            // content,
+            slug,
+            // status,
+            time,
+          },
+          i
+        ) => {
           const renderAbleCateries = [...categories] as CategoryType[]
           if (categories.length > 5) {
             renderAbleCateries.splice(4)
@@ -186,7 +189,7 @@ const HomePageHeroSection: FC<HomePageHeroSectionPropsType> = ({
           return (
             <CarouselItem
               className="basis-full shrink-0"
-              key={slug}
+              key={slug || i}
             >
               <Hero
                 // alt={images[0].alt}
@@ -199,7 +202,7 @@ const HomePageHeroSection: FC<HomePageHeroSectionPropsType> = ({
                 heroImage="/write.jpg"
                 // name={name}
                 name="nxa"
-                time={time}
+                time={time || ''}
                 title={title}
               />
             </CarouselItem>

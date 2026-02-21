@@ -1,6 +1,6 @@
 import cors from 'cors'
 import express, { type Express, json, urlencoded } from 'express'
-import type { UserType } from './@types/user'
+import type { TokenUserType } from './@types/user'
 import { auth } from './auth/main'
 import ENV from './config/env.config'
 import { errorMiddleware } from './middlewares/error.middleware'
@@ -35,7 +35,7 @@ app.use(errorMiddleware)
 
 declare global {
   namespace Express {
-    interface User extends UserType {}
+    interface User extends TokenUserType {}
   }
 }
 
