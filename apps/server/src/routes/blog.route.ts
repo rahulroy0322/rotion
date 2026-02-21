@@ -3,6 +3,7 @@ import {
   createBlogController,
   getPublishedBlogBySlugController,
   getPublishedBlogsController,
+  updateBlogController,
 } from '../controllers/blog.controller'
 import {
   authRequired,
@@ -22,29 +23,14 @@ blogRouter
     createBlogController
   )
 
-blogRouter.route('/:slug').get(getPublishedBlogBySlugController)
-// .post(createBlogController)
-
-// blogRouter
-//   .route('/')
-//   .get(getAllMatchsController)
-//   // TODO! check auth!
-//   .post(createMatchController);
-
-// blogRouter
-//   .route('/:id')
-//   .get(getMatchByIdController)
-//   // TODO! check auth!
-//   .patch(patchMatchByIdController);
-
-// blogRouter
-//   .route('/:id/start')
-//   // TODO! check auth!
-//   .post(startMatchByIdController);
-
-// blogRouter.get(
-//   '/:tournamentId/matches',
-//   getAllMatchsByTournamentIdController
-// );
+blogRouter
+  .route('/:slug')
+  .get(checkAuth, getPublishedBlogBySlugController)
+  .patch(
+    checkAuth,
+    authRequired,
+    roleRequired(['admin', 'super']),
+    updateBlogController
+  )
 
 export default blogRouter

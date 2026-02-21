@@ -11,7 +11,7 @@ import { getBlog } from '#/api/blog'
 import { Image } from '#/components/image'
 import { Main } from '#/components/main'
 import type { ImageType } from '#/types'
-import '#/routes/admin/blog/create.css'
+import '#/components/editor/editor.css'
 import { KEYS } from '#/keys/query'
 
 const images = [

@@ -16,4 +16,12 @@ const findBlog = (filter: QueryFilter<BlogType>) =>
 
 const createBlog = (data: BlogSchemaType) => Blog.create(data)
 
-export { getAllBlogs, findBlog, createBlog }
+const updateBlog = (
+  filter: QueryFilter<BlogType>,
+  data: Partial<BlogSchemaType>
+) =>
+  Blog.findOneAndUpdate(filter as QueryFilter<BlogSchemaType>, data, {
+    new: true,
+  })
+
+export { getAllBlogs, findBlog, createBlog, updateBlog }

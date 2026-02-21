@@ -1,4 +1,5 @@
 .tiptap {
+  padding: calc(var(--spacing) * 2);
   /* biome-ignore lint/complexity/noImportantStyles: outsource */
   outline: none !important;
   /* biome-ignore lint/complexity/noImportantStyles: outsource */

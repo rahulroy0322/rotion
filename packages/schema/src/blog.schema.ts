@@ -16,6 +16,8 @@ const blogSchema = z.object({
   status: z.enum(blogStatus).default('draft'),
 })
 
+const blogUpdateSchema = blogSchema.partial()
+
 type BlogStatusType = (typeof blogStatus)[number]
 type BlogSchemaType = z.infer<typeof blogSchema>
 
@@ -24,4 +26,4 @@ type BlogType = {
 } & BlogSchemaType
 export type { BlogSchemaType, BlogType, BlogStatusType }
 
-export { blogSchema, blogStatus }
+export { blogSchema, blogStatus, blogUpdateSchema }

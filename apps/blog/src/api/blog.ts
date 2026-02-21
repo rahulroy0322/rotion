@@ -3,7 +3,7 @@ import { BASE_URL } from '#/const/url'
 import { getToken } from '#/lib/token'
 import type { ResType } from '#/types'
 
-type MethodType = 'GET' | 'POST'
+type MethodType = 'GET' | 'POST' | 'PATCH'
 
 const req = async <T>(
   route: string,
@@ -32,6 +32,9 @@ const get = async <T>(route: string) => await req<T>(route)
 const post = async <T>(route: string, body: Partial<BlogType>) =>
   await req<T>(route, 'POST', JSON.stringify(body))
 
+const patch = async <T>(route: string, body: Partial<BlogType>) =>
+  await req<T>(route, 'PATCH', JSON.stringify(body))
+
 const getBlogs = async () => {
   const data = await get<{
     blogs: BlogType[]
@@ -56,9 +59,21 @@ const createBlog = async (blog: BlogSchemaType) => {
   return data.data.blog
 }
 
+const updateBlog = async (id: string, blog: BlogSchemaType) => {
+  const data = await patch<{
+    blog: BlogType | null
+  }>(`blog/${id}`, blog)
+
+  if (!data.success) {
+    throw data.error
+  }
+
+  return data.data.blog
+}
+
 const getBlog = async (slug: string) =>
   await get<{
     blog: BlogType | null
   }>(`blog/${slug}`)
 
-export { getBlogs, getBlog, createBlog }
+export { getBlogs, getBlog, createBlog, updateBlog }

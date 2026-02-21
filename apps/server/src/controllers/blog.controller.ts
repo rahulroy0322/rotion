@@ -1,14 +1,15 @@
 import type { RequestHandler } from 'express'
-import { blogSchema } from 'schema/blog'
+import { blogSchema, blogUpdateSchema } from 'schema/blog'
 import { adminRoles, type RoleType } from 'schema/role'
 import type { ResType } from '../@types/res'
 import {
   ConflictError,
+  ForbidenError,
   NotFoundError,
   ServerError,
   ZodError,
 } from '../error/app.error'
-import { createBlog, findBlog, getAllBlogs } from '../services/blog'
+import { createBlog, findBlog, getAllBlogs, updateBlog } from '../services/blog'
 
 const getPublishedBlogsController: RequestHandler = async (req, res) => {
   let filter: Parameters<typeof getAllBlogs>[0] = {
@@ -43,7 +44,11 @@ const getPublishedBlogBySlugController: RequestHandler<{
   }
 
   if (blog.status === 'draft') {
-    throw new NotFoundError('Blog Not Published yet')
+    const user = req.user
+
+    if (!user || !adminRoles.includes(user.role)) {
+      throw new NotFoundError('Blog Not Published yet')
+    }
   }
 
   res.status(200).json({
@@ -73,7 +78,7 @@ const createBlogController: RequestHandler = async (req, res) => {
   const existsBlog = await findBlog({
     $or: [
       {
-        title: data.time,
+        title: data.title,
       },
       {
         slug: data.slug,
@@ -100,8 +105,49 @@ const createBlogController: RequestHandler = async (req, res) => {
   } satisfies ResType)
 }
 
+const updateBlogController: RequestHandler<{
+  slug: string
+}> = async (req, res) => {
+  const user = req.user
+  if (!user) {
+    throw new ServerError("some event dosn't handled properly!")
+  }
+
+  const parsed = blogUpdateSchema.safeParse(req.body || {})
+
+  if (!parsed.success) {
+    throw new ZodError(parsed.error)
+  }
+  const { slug } = req.params
+
+  // TODO! check for admin
+
+  const { data } = parsed
+
+  // TODo! ADD  author
+  //! check  for author
+  const blog = await updateBlog(
+    {
+      slug,
+    },
+    data
+  )
+
+  if (!blog) {
+    throw new ForbidenError()
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      blog,
+    },
+  } satisfies ResType)
+}
+
 export {
   getPublishedBlogsController,
   createBlogController,
   getPublishedBlogBySlugController,
+  updateBlogController,
 }

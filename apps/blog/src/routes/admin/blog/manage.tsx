@@ -106,7 +106,7 @@ const ManagePageImpl: FC<ManagePageImplPropsType> = ({ blogs }) => {
                   params={{
                     slug,
                   }}
-                  to="/blog/$slug"
+                  to="/admin/blog/edit/$slug"
                 >
                   <Image
                     // alt={images[0].alt || title}
