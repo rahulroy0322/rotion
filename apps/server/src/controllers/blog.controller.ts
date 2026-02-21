@@ -1,5 +1,6 @@
 import type { RequestHandler } from 'express'
 import { blogDeleteReqSchema, blogSchema, blogUpdateSchema } from 'schema/blog'
+import { blogQuerySchema } from 'schema/req'
 import { adminRoles, type RoleType } from 'schema/role'
 import type { ResType } from '../@types/res'
 import {
@@ -10,6 +11,7 @@ import {
   ZodError,
 } from '../error/app.error'
 import {
+  countBlogs,
   createBlog,
   deleteBlogs,
   findBlog,
@@ -18,6 +20,12 @@ import {
 } from '../services/blog'
 
 const getPublishedBlogsController: RequestHandler = async (req, res) => {
+  const parsed = blogQuerySchema.safeParse(req.query || req.body || {})
+
+  if (!parsed.success) {
+    throw new ZodError(parsed.error)
+  }
+
   let filter: Parameters<typeof getAllBlogs>[0] = {
     status: 'published',
   }
@@ -28,12 +36,27 @@ const getPublishedBlogsController: RequestHandler = async (req, res) => {
     }
   }
 
-  const blogs = (await getAllBlogs(filter)) || []
+  const { limit, page } = parsed.data
+
+  const skip = limit * (page - 1)
+
+  const [blogs, total = 0] = await Promise.all([
+    getAllBlogs(filter, {
+      limit,
+      skip,
+    }),
+    countBlogs(filter),
+  ])
 
   res.status(200).json({
     success: true,
     data: {
       blogs,
+      items: {
+        total,
+        current: blogs.length,
+        pages: Math.ceil(total / blogs.length),
+      },
     },
   } satisfies ResType)
 }

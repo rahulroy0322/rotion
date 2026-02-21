@@ -6,10 +6,11 @@ const getAllBlogs = (
   filter: {
     status?: BlogStatusType
   },
-  { limit } = {
+  { limit, skip } = {
     limit: 10,
+    skip: 0,
   }
-) => Blog.find(filter).limit(limit)
+) => Blog.find(filter).limit(limit).skip(skip)
 
 const findBlog = (filter: QueryFilter<BlogType>) =>
   Blog.findOne(filter as QueryFilter<BlogSchemaType>)
@@ -27,4 +28,14 @@ const updateBlog = (
 const deleteBlogs = (filter: QueryFilter<BlogType>) =>
   Blog.deleteMany(filter as QueryFilter<BlogSchemaType>)
 
-export { getAllBlogs, findBlog, createBlog, updateBlog, deleteBlogs }
+const countBlogs = (filter: QueryFilter<BlogType>) =>
+  Blog.countDocuments(filter as QueryFilter<BlogSchemaType>)
+
+export {
+  getAllBlogs,
+  findBlog,
+  createBlog,
+  updateBlog,
+  deleteBlogs,
+  countBlogs,
+}
