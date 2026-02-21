@@ -18,6 +18,10 @@ const blogSchema = z.object({
 
 const blogUpdateSchema = blogSchema.partial()
 
+const blogDeleteReqSchema = z.object({
+  ids: z.array(z.string()),
+})
+
 type BlogStatusType = (typeof blogStatus)[number]
 type BlogSchemaType = z.infer<typeof blogSchema>
 
@@ -26,4 +30,4 @@ type BlogType = {
 } & BlogSchemaType
 export type { BlogSchemaType, BlogType, BlogStatusType }
 
-export { blogSchema, blogStatus, blogUpdateSchema }
+export { blogSchema, blogStatus, blogUpdateSchema, blogDeleteReqSchema }

@@ -1,144 +1,258 @@
+'use no memo'
+import {
+  DotsThreeVerticalIcon,
+  EyeIcon,
+  PencilIcon,
+} from '@phosphor-icons/react'
 import {
   createFileRoute,
   Link,
   redirect,
   useLoaderData,
 } from '@tanstack/react-router'
-import { type FC, useMemo, useState } from 'react'
+import { type FC, useState } from 'react'
 import type { BlogStatusType, BlogType } from 'schema/blog'
-import { Input } from 'ui/ui/input'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from 'ui/ui/select'
+  type ColumnDef,
+  type ColumnFiltersState,
+  DataTable,
+  DataTableColumnHeader,
+  DataTableFooter,
+  DataTableHeader,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+} from 'ui/components/app/data.table.tsx'
+import { Badge } from 'ui/ui/badge'
+import { Button } from 'ui/ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from 'ui/ui/card'
+import { Checkbox } from 'ui/ui/checkbox'
+import { Popover, PopoverContent, PopoverTrigger } from 'ui/ui/popover'
+import { toast } from 'ui/ui/sonner'
 import { getBlogs } from '#/api/blog'
-import { Image } from '#/components/image'
 import { KEYS } from '#/keys/query'
 import { timeFormat } from '#/utils/time'
-import { toast } from '@/components/ui/sonner'
 
-type BlogStatus = BlogStatusType | 'all'
+type BlogKeyType = keyof BlogType
 
-type ManagePageImplPropsType = {
-  blogs: BlogType[]
-}
-
-const ManagePageImpl: FC<ManagePageImplPropsType> = ({ blogs }) => {
-  const [filterBlogs, setFilterBlogs] = useState(blogs)
-
-  const { all, draft, published } = useMemo(() => {
-    return {
-      all: filterBlogs,
-      draft: filterBlogs.filter(({ status }) => status === 'draft'),
-      published: filterBlogs.filter(({ status }) => status === 'published'),
-    } satisfies Record<BlogStatus, BlogType[]>
-  }, [filterBlogs])
-
-  const handelSelect = (value: BlogStatus) => {
-    if (value === 'all') {
-      setFilterBlogs(blogs)
-    } else {
-      setFilterBlogs(blogs.filter(({ status }) => status === value))
-    }
-  }
-
-  const handelSearch = (value: string) => {
-    setFilterBlogs(
-      blogs.filter(
-        ({ title, slug }) => title.includes(value) || slug.includes(value)
-      )
-    )
-  }
-
-  return (
-    <div className="grow overflow-hidden container mx-auto p-4 flex flex-col gap-2">
-      <div className="flex items-center justify-baseline gap-2">
-        <Select
-          defaultValue={'all' satisfies BlogStatus}
-          onValueChange={(value) => handelSelect(value as BlogStatus)}
-        >
-          <SelectTrigger>
-            <SelectValue
-              className={'capitalize'}
-              placeholder="Select"
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={'all' satisfies BlogStatus}>
-              All ({all.length})
-            </SelectItem>
-            <SelectItem value={'draft' satisfies BlogStatus}>
-              Draft ({draft.length})
-            </SelectItem>
-            <SelectItem value={'published' satisfies BlogStatus}>
-              Published ({published.length})
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        <div className="ml-auto">
-          <Input
-            className="min-w-[35ch]"
-            onChange={(e) => handelSearch(e.target.value.trim())}
-            placeholder="Search blog"
-          />
-        </div>
+const columns: ColumnDef<BlogType>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <div className="flex items-center justify-center">
+        <Checkbox
+          aria-label="Select all"
+          checked={
+            table.getIsSomePageRowsSelected() ||
+            table.getIsAllPageRowsSelected()
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        />
       </div>
+    ),
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center">
+        <Checkbox
+          aria-label="Select row"
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
 
-      <div className="overflow-auto grow">
-        <ul className="space-y-2">
-          {filterBlogs.map(
-            ({
-              //images,
-              title,
-              time,
-              slug,
-            }) => (
-              <li key={slug}>
-                {/* 
-                  // TODO!
-                    */}
+  {
+    accessorKey: 'title' satisfies BlogKeyType,
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        className="max-w-30"
+        column={column}
+        title="Title"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="line-clamp-1 max-w-30">
+        {row.getValue('title' satisfies BlogKeyType)}
+      </div>
+    ),
+    enableSorting: true,
+    enableHiding: true,
+  },
+
+  {
+    accessorKey: 'time' satisfies BlogKeyType,
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        className="w-fit"
+        column={column}
+        title="When?"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="line-clamp-1">
+        {timeFormat(row.getValue('time' satisfies BlogKeyType))}
+      </div>
+    ),
+    enableSorting: true,
+    enableHiding: true,
+    // filterFn: 'inDateRange' as 'weakEquals',
+  },
+  {
+    accessorKey: 'status' satisfies BlogKeyType,
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Status"
+      />
+    ),
+    cell: ({ row }) => {
+      const status: BlogStatusType = row.getValue(
+        'status' satisfies BlogKeyType
+      )
+      return (
+        <div className="flex items-center justify-center">
+          <Badge variant={status === 'published' ? 'default' : 'secondary'}>
+            {status}
+          </Badge>
+        </div>
+      )
+    },
+    enableSorting: false,
+    enableHiding: true,
+  },
+
+  {
+    id: 'actions',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Actions"
+      />
+    ),
+    cell: ({
+      row: {
+        original: { slug },
+      },
+    }) => (
+      <div className="flex items-center justify-end">
+        <Popover>
+          <PopoverTrigger
+            render={
+              <Button
+                size="sm"
+                variant="ghost"
+              />
+            }
+          >
+            <DotsThreeVerticalIcon />
+          </PopoverTrigger>
+          <PopoverContent
+            align="end"
+            className="flex-row w-fit gap-1 shadow shadow-primary"
+          >
+            <Button
+              nativeButton={false}
+              render={
                 <Link
-                  className="flex items-end gap-2"
+                  params={{
+                    slug,
+                  }}
+                  to="/blog/$slug"
+                />
+              }
+              size={'icon-sm'}
+              variant={'ghost'}
+            >
+              <EyeIcon />
+            </Button>
+            <Button
+              nativeButton={false}
+              render={
+                <Link
                   params={{
                     slug,
                   }}
                   to="/admin/blog/edit/$slug"
-                >
-                  <Image
-                    // alt={images[0].alt || title}
-                    alt=""
-                    className="size-24"
-                    src={'/write.jpg'}
-                  />
-                  <div>
-                    <h2 className="text-lg font-bold">{title}</h2>
-                    <time
-                      className="text-xs text-muted-foreground"
-                      dateTime={time?.toString()}
-                    >
-                      {timeFormat(time || '')}
-                    </time>
-                  </div>
-                </Link>
-              </li>
-            )
-          )}
-        </ul>
+                />
+              }
+              size={'icon-sm'}
+            >
+              <PencilIcon />
+            </Button>
+          </PopoverContent>
+        </Popover>
       </div>
-    </div>
-  )
-}
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+]
 
 const ManagePage: FC = () => {
   const blogs = useLoaderData({
     from: '/admin/blog/manage',
   })
+  const [sorting, onSortingChange] = useState<SortingState>([])
+  const [globalFilter, onGlobalFilterChange] = useState('')
+  const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>(
+    []
+  )
 
-  return <ManagePageImpl blogs={blogs} />
+  const table = useReactTable<BlogType>({
+    data: blogs,
+    columns,
+    enableRowSelection: (row) => !!row.original._id,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange,
+    getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange,
+    // manualPagination: true,
+    // onPaginationChange,
+    // pageCount: 50,
+    state: {
+      sorting,
+      globalFilter,
+      columnFilters,
+      // pagination,
+    },
+    // filterFns: {
+    //   inDateRange,
+    // },
+    onColumnFiltersChange,
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 50,
+      },
+    },
+  })
+
+  return (
+    <div className="grow overflow-hidden p-2">
+      <Card className="shadow h-full flex flex-col">
+        <CardHeader>
+          <DataTableHeader
+            search={globalFilter}
+            setSearch={onGlobalFilterChange}
+            table={table}
+          />
+        </CardHeader>
+        <CardContent className="grow overflow-auto relative">
+          <DataTable table={table} />
+        </CardContent>
+        <CardFooter>
+          <DataTableFooter table={table} />
+        </CardFooter>
+      </Card>
+    </div>
+  )
 }
 
 const Route = createFileRoute('/admin/blog/manage')({

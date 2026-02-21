@@ -24,4 +24,7 @@ const updateBlog = (
     new: true,
   })
 
-export { getAllBlogs, findBlog, createBlog, updateBlog }
+const deleteBlogs = (filter: QueryFilter<BlogType>) =>
+  Blog.deleteMany(filter as QueryFilter<BlogSchemaType>)
+
+export { getAllBlogs, findBlog, createBlog, updateBlog, deleteBlogs }

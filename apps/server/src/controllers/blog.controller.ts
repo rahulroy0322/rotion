@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express'
-import { blogSchema, blogUpdateSchema } from 'schema/blog'
+import { blogDeleteReqSchema, blogSchema, blogUpdateSchema } from 'schema/blog'
 import { adminRoles, type RoleType } from 'schema/role'
 import type { ResType } from '../@types/res'
 import {
@@ -9,7 +9,13 @@ import {
   ServerError,
   ZodError,
 } from '../error/app.error'
-import { createBlog, findBlog, getAllBlogs, updateBlog } from '../services/blog'
+import {
+  createBlog,
+  deleteBlogs,
+  findBlog,
+  getAllBlogs,
+  updateBlog,
+} from '../services/blog'
 
 const getPublishedBlogsController: RequestHandler = async (req, res) => {
   let filter: Parameters<typeof getAllBlogs>[0] = {
@@ -145,9 +151,40 @@ const updateBlogController: RequestHandler<{
   } satisfies ResType)
 }
 
+const deleteBlogsController: RequestHandler = async (req, res) => {
+  const user = req.user
+  if (!user) {
+    throw new ServerError("some event dosn't handled properly!")
+  }
+
+  const parsed = blogDeleteReqSchema.safeParse(req.body || {})
+
+  if (!parsed.success) {
+    throw new ZodError(parsed.error)
+  }
+
+  const { data } = parsed
+
+  // TODo! check permission
+
+  await deleteBlogs({
+    _id: {
+      $in: data.ids,
+    },
+  })
+
+  res.status(200).json({
+    success: true,
+    data: {
+      messgae: 'deleted successfully',
+    },
+  } satisfies ResType)
+}
+
 export {
   getPublishedBlogsController,
   createBlogController,
   getPublishedBlogBySlugController,
   updateBlogController,
+  deleteBlogsController,
 }

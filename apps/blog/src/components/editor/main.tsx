@@ -2,6 +2,7 @@ import StarterKit from '@tiptap/starter-kit'
 import './editor.css'
 import {
   FileDashedIcon,
+  FloppyDiskIcon,
   GearFineIcon,
   type Icon,
   PaperPlaneTiltIcon,
@@ -44,6 +45,7 @@ type BlogHeaderActionPropsType = Pick<BlogFormHeaderPropsType, 'client'> & {
   loading: string
   success: string
   fn: (data: BlogSchemaType) => Promise<BlogType | null>
+  redirect?: boolean
 }
 
 const BlogHeaderAction: FC<BlogHeaderActionPropsType> = ({
@@ -55,6 +57,7 @@ const BlogHeaderAction: FC<BlogHeaderActionPropsType> = ({
   client,
   getBlogFromData,
   fn,
+  redirect = true,
 }) => {
   const navigate = useNavigate()
 
@@ -88,9 +91,11 @@ const BlogHeaderAction: FC<BlogHeaderActionPropsType> = ({
             loading,
             success: () => {
               res({})
-              navigate({
-                href: '/admin',
-              })
+              if (redirect) {
+                navigate({
+                  href: '/admin',
+                })
+              }
 
               client.invalidateQueries({
                 queryKey: KEYS.blogs,
@@ -140,7 +145,7 @@ const BlogSaveAction: FC<BlogSaveActionPropsType> = ({
     disabled={!title || !slug}
     fn={createBlog}
     getBlogFromData={getBlogFromData}
-    Icon={UploadIcon}
+    Icon={FloppyDiskIcon}
     loading="Saving Blog..."
     mutationKey={[...KEYS.blogs, title]}
     success="Blog Craeted Successfully"
@@ -193,6 +198,27 @@ const BlogPublishAction: FC<BlogPublishActionPropsType> = ({
     Icon={PaperPlaneTiltIcon}
     loading="Pulishing Blog..."
     mutationKey={[...KEYS.blogs, title]}
+    success="Blog Published Successfully"
+  />
+)
+
+type BlogUpdateActionPropsType = BlogSaveActionPropsType
+
+const BlogUpdateAction: FC<BlogUpdateActionPropsType> = ({
+  title,
+  slug,
+  getBlogFromData,
+  client,
+}) => (
+  <BlogHeaderAction
+    client={client}
+    disabled={!title || !slug}
+    fn={(blog) => updateBlog(slug, blog)}
+    getBlogFromData={getBlogFromData}
+    Icon={UploadIcon}
+    loading="Pulishing Blog..."
+    mutationKey={[...KEYS.blogs, title]}
+    redirect={false}
     success="Blog Published Successfully"
   />
 )
@@ -260,6 +286,14 @@ const BlogFormHeader: FC<BlogFormHeaderPropsType> = ({
           title={title}
         />
       )}
+      {id ? (
+        <BlogUpdateAction
+          client={client}
+          getBlogFromData={getBlogFromData}
+          slug={slug}
+          title={title}
+        />
+      ) : null}
       <BlogFormSettings
         genSlug={genSlug}
         setSlug={setSlug}

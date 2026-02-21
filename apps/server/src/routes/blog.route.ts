@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   createBlogController,
+  deleteBlogsController,
   getPublishedBlogBySlugController,
   getPublishedBlogsController,
   updateBlogController,
@@ -21,6 +22,12 @@ blogRouter
     authRequired,
     roleRequired(['admin', 'super']),
     createBlogController
+  )
+  .delete(
+    checkAuth,
+    authRequired,
+    roleRequired(['admin', 'super']),
+    deleteBlogsController
   )
 
 blogRouter
