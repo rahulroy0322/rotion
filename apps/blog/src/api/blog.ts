@@ -1,9 +1,10 @@
-import type { BlogSchemaType, BlogType } from 'schema/blog'
+import type { BlogSchemaType, BlogType, blogDeleteReqSchema } from 'schema/blog'
+import type { z } from 'zod'
 import { BASE_URL } from '#/const/url'
 import { getToken } from '#/lib/token'
 import type { ResType } from '#/types'
 
-type MethodType = 'GET' | 'POST' | 'PATCH'
+type MethodType = 'GET' | 'POST' | 'PATCH' | 'DELETE'
 
 const req = async <T>(
   route: string,
@@ -34,6 +35,9 @@ const post = async <T>(route: string, body: Partial<BlogType>) =>
 
 const patch = async <T>(route: string, body: Partial<BlogType>) =>
   await req<T>(route, 'PATCH', JSON.stringify(body))
+
+const destroy = async <T>(route: string, body: unknown) =>
+  await req<T>(route, 'DELETE', JSON.stringify(body))
 
 const getBlogs = async (
   { limit, page } = {
@@ -86,4 +90,16 @@ const getBlog = async (slug: string) =>
     blog: BlogType | null
   }>(`blog/${slug}`)
 
-export { getBlogs, getBlog, createBlog, updateBlog }
+const deleteBlogs = async (data: z.infer<typeof blogDeleteReqSchema>) => {
+  const res = await destroy<{
+    messgae: string
+  }>(`blog`, data)
+
+  if (!res.success) {
+    throw res.error
+  }
+
+  return res.data.messgae
+}
+
+export { getBlogs, getBlog, createBlog, updateBlog, deleteBlogs }

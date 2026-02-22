@@ -13,6 +13,7 @@ import { routeTree } from './routeTree.gen'
 
 import './index.css'
 import 'ui/index.css'
+import { TooltipProvider } from 'ui/ui/tooltip'
 import useAuth, { AuthContextProvider } from './context/auth'
 
 const queryContext = getContext()
@@ -57,11 +58,13 @@ if (rootElement && !rootElement.innerHTML) {
   const root = createRoot(rootElement)
   root.render(
     <StrictMode>
-      <QueryProvider {...queryContext}>
-        <AuthContextProvider>
-          <App />
-        </AuthContextProvider>
-      </QueryProvider>
+      <TooltipProvider>
+        <QueryProvider {...queryContext}>
+          <AuthContextProvider>
+            <App />
+          </AuthContextProvider>
+        </QueryProvider>
+      </TooltipProvider>
     </StrictMode>
   )
 }

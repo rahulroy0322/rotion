@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "build": "npm run check && npm run build:prod",
+    "build:prod": "vite build",
+    "check": "tsc -b",
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,7 +27,8 @@
     "schema": "workspace:*",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
-    "ui": "workspace:*"
+    "ui": "workspace:*",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",

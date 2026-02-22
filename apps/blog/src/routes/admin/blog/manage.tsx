@@ -3,11 +3,21 @@ import {
   DotsThreeVerticalIcon,
   EyeIcon,
   PencilIcon,
+  TrashIcon,
 } from '@phosphor-icons/react'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import {
+  keepPreviousData,
+  type QueryClient,
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query'
+import { createFileRoute, Link, useRouteContext } from '@tanstack/react-router'
 import { type FC, useState } from 'react'
-import type { BlogStatusType, BlogType } from 'schema/blog'
+import {
+  type BlogStatusType,
+  type BlogType,
+  blogDeleteReqSchema,
+} from 'schema/blog'
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -29,7 +39,9 @@ import { Button } from 'ui/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from 'ui/ui/card'
 import { Checkbox } from 'ui/ui/checkbox'
 import { Popover, PopoverContent, PopoverTrigger } from 'ui/ui/popover'
-import { getBlogs } from '#/api/blog'
+import { toast } from 'ui/ui/sonner'
+import { Tooltip, TooltipContent, TooltipTrigger } from 'ui/ui/tooltip'
+import { deleteBlogs, getBlogs } from '#/api/blog'
 import { Loading } from '#/components/loading'
 import { KEYS } from '#/keys/query'
 import { timeFormat } from '#/utils/time'
@@ -197,6 +209,7 @@ type ManagePageImplPropsType = {
   total: number
   pagination: PaginationState
   onPaginationChange: OnChangeFn<PaginationState>
+  client: QueryClient
 }
 
 const ManagePageImpl: FC<ManagePageImplPropsType> = ({
@@ -204,6 +217,7 @@ const ManagePageImpl: FC<ManagePageImplPropsType> = ({
   pages,
   pagination,
   onPaginationChange,
+  client,
 }) => {
   const [sorting, onSortingChange] = useState<SortingState>([])
   const [globalFilter, onGlobalFilterChange] = useState('')
@@ -236,6 +250,61 @@ const ManagePageImpl: FC<ManagePageImplPropsType> = ({
     getPaginationRowModel: getPaginationRowModel(),
   })
 
+  const getSelectedIds = () =>
+    table.getFilteredSelectedRowModel().rows.map(({ original: { _id } }) => _id)
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: [...KEYS.blogs, getSelectedIds()],
+    mutationFn: () =>
+      new Promise((res, rej) => {
+        const selectedIds = getSelectedIds()
+
+        toast.promise(
+          new Promise(async (res, rej) => {
+            try {
+              const parsed = blogDeleteReqSchema.safeParse({
+                ids: selectedIds,
+              })
+
+              if (!parsed.success) {
+                throw parsed.error
+              }
+
+              const data = await deleteBlogs(parsed.data)
+
+              if (!data) {
+                throw new Error('Something went wrong!')
+              }
+
+              res(data)
+            } catch (e) {
+              rej(e)
+            }
+          }),
+          {
+            loading: `Deleting ${selectedIds.length} blog${selectedIds.length > 1 ? 's' : ''}`,
+            success: () => {
+              res({})
+
+              client.invalidateQueries({
+                queryKey: [...KEYS.blogs, pagination],
+              })
+              return `${selectedIds.length} blog${selectedIds.length > 1 ? 's' : ''} deleted successfully`
+            },
+            error: (e: Error) => {
+              rej(e)
+              return (
+                <div>
+                  <b>Error: </b>
+                  <span>{e?.message ?? 'SomeThing went wrong'}</span>
+                </div>
+              )
+            },
+          }
+        )
+      }),
+  })
+
   return (
     <div className="grow overflow-hidden p-2">
       <Card className="shadow h-full flex flex-col">
@@ -244,7 +313,26 @@ const ManagePageImpl: FC<ManagePageImplPropsType> = ({
             search={globalFilter}
             setSearch={onGlobalFilterChange}
             table={table}
-          />
+          >
+            {table.getFilteredSelectedRowModel().rows.length ? (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      disabled={isPending}
+                      onClick={mutate as () => void}
+                      size={'icon'}
+                    />
+                  }
+                >
+                  <TrashIcon />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete the selected rows</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
+          </DataTableHeader>
         </CardHeader>
         <CardContent className="grow overflow-auto relative">
           <DataTable table={table} />
@@ -261,6 +349,10 @@ const ManagePage: FC = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
+  })
+
+  const { client } = useRouteContext({
+    from: '/admin/blog/manage',
   })
 
   const { error, isLoading, data } = useQuery({
@@ -292,6 +384,7 @@ const ManagePage: FC = () => {
 
   return (
     <ManagePageImpl
+      client={client}
       data={blogs}
       onPaginationChange={setPagination}
       pages={pages}

@@ -67,6 +67,7 @@ const BlogPageImages: FC<BlogPageImagesPropsType> = ({ slug, images }) => {
             aria-label={`See ${alt}`}
             className="aspect-video h-20 w-auto p-0 cursor-pointer"
             key={`${alt}-${url}`}
+            nativeButton={false}
             onClick={() =>
               setSelectedImage({
                 url,

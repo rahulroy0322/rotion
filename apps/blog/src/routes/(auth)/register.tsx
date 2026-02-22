@@ -136,6 +136,7 @@ const RegisterPage: FC = () => {
         <FieldGroup>
           <div className="flex items-center justify-between">
             <Button
+              nativeButton={false}
               render={<Link to="/login" />}
               variant={'link'}
             >
@@ -143,6 +144,7 @@ const RegisterPage: FC = () => {
             </Button>
 
             <Button
+              nativeButton={false}
               render={<Link to="/forget" />}
               variant={'link'}
             >

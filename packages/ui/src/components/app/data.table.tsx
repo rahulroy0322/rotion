@@ -87,30 +87,29 @@ const DataTableColumnHeader = <TData, TValue>({
 
 
 type DataTableHeaderPropsType<T extends Record<string, unknown>> = {
-  search: string
-  setSearch: (search: string) => void
-  table: ReactTable<T>
+    search: string
+    setSearch: (search: string) => void
+    table: ReactTable<T>
+    children: ReactNode
 }
 
-const DataTableHeader =
-  <T extends Record<string, unknown>>({
+const DataTableHeader = <T extends Record<string, unknown>>({
     table,
     search,
     setSearch,
-  }: DataTableHeaderPropsType<T>) => {
-
-    return <div className='flex gap-2 items-center justify-end'>
-      <Input
-        value={search}
-        onChange={(e) => setSearch(
-          e.target.value
-        )}
-        className='max-w-80'
-        placeholder='Search ...'
-      />
-<DataTableHeadersFilter table={table}/>
+    children
+}: DataTableHeaderPropsType<T>) => <div className='flex gap-2 items-center justify-end'>
+        <Input
+            value={search}
+            onChange={(e) => setSearch(
+                e.target.value
+            )}
+            className='max-w-80'
+            placeholder='Search ...'
+        />
+        {children}
+        <DataTableHeadersFilter table={table} />
     </div>
-  }
 
 
 type DataTableHeadersFilterPropsType<T extends Record<string, unknown>> = {
@@ -121,7 +120,7 @@ const DataTableHeadersFilter = <T extends Record<string, unknown>>({
     table,
 }: DataTableHeadersFilterPropsType<T>): ReactNode => <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="outline" />}>
-    Columns <FunnelIcon className="size-4" />
+            Columns <FunnelIcon className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
             <DropdownMenuGroup>

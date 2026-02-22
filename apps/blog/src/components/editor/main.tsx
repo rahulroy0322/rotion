@@ -327,6 +327,7 @@ const BlogFormSettings: FC<BlogFormSettingsPropsType> = ({
         <DrawerTitle>Blog Settings</DrawerTitle>
 
         <Button
+          nativeButton={false}
           render={<DrawerClose />}
           size={'icon'}
           variant={'ghost'}

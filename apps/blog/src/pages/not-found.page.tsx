@@ -35,7 +35,10 @@ const NotFoundPage: FC = () => {
           </p>
 
           <div className="grid grid-cols-2 gap-2">
-            <Button render={<Link to="/" />}>
+            <Button
+              nativeButton={false}
+              render={<Link to="/" />}
+            >
               <HouseIcon className="size-5" /> Go to Home
             </Button>
           </div>

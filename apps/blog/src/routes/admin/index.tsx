@@ -18,6 +18,7 @@ const AdminPage: FC = () => (
     <div className="flex items-center justify-center flex-wrap gap-2 *:flex-1 *:basis-1/4">
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -32,6 +33,7 @@ const AdminPage: FC = () => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -47,6 +49,7 @@ const AdminPage: FC = () => (
 
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -63,6 +66,7 @@ const AdminPage: FC = () => (
 
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -78,6 +82,7 @@ const AdminPage: FC = () => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -93,6 +98,7 @@ const AdminPage: FC = () => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -108,6 +114,7 @@ const AdminPage: FC = () => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -123,6 +130,7 @@ const AdminPage: FC = () => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -138,6 +146,7 @@ const AdminPage: FC = () => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"

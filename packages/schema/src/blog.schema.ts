@@ -19,7 +19,7 @@ const blogSchema = z.object({
 const blogUpdateSchema = blogSchema.partial()
 
 const blogDeleteReqSchema = z.object({
-  ids: z.array(z.string()),
+  ids: z.array(z.string()).min(1, 'Minimum one id is required to delete'),
 })
 
 type BlogStatusType = (typeof blogStatus)[number]

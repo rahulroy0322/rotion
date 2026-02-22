@@ -97,6 +97,7 @@ const HomePagePaginations: FC<HomePagePaginationsPropsType> = ({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
+            nativeButton={false}
             render={
               <Link
                 disabled={currentPage === 1}
@@ -113,6 +114,7 @@ const HomePagePaginations: FC<HomePagePaginationsPropsType> = ({
               <PaginationItem>
                 <PaginationLink
                   isActive={item.page === currentPage}
+                  nativeButton={false}
                   render={<Link to="/" />}
                 >
                   {item.page}
@@ -128,6 +130,7 @@ const HomePagePaginations: FC<HomePagePaginationsPropsType> = ({
 
         <PaginationItem>
           <PaginationNext
+            nativeButton={false}
             render={
               <Link
                 disabled={currentPage === pages}

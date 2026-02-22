@@ -21,6 +21,7 @@ const AdminHeader: FC<AdminHeaderPropsType> = ({ user }) => (
     <nav className="flex gap-2 items-center">
       <Button
         className="bg-transparent text-primary! group"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -35,6 +36,7 @@ const AdminHeader: FC<AdminHeaderPropsType> = ({ user }) => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"
@@ -49,6 +51,7 @@ const AdminHeader: FC<AdminHeaderPropsType> = ({ user }) => (
       </Button>
       <Button
         className="bg-transparent text-primary!"
+        nativeButton={false}
         render={
           <Link
             className="no-underline"

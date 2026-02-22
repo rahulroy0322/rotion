@@ -134,6 +134,7 @@ const MobileNav: FC<NavPropsType> = ({ user }) => (
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <Button
+                nativeButton={false}
                 render={<Link to="/login" />}
                 variant={'outline'}
               >
@@ -141,7 +142,12 @@ const MobileNav: FC<NavPropsType> = ({ user }) => (
               </Button>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Button render={<Link to="/register" />}>Register</Button>
+              <Button
+                nativeButton={false}
+                render={<Link to="/register" />}
+              >
+                Register
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         ) : (
@@ -156,6 +162,7 @@ const MobileNav: FC<NavPropsType> = ({ user }) => (
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Button
+                nativeButton={false}
                 render={
                   <Link
                     // TODO!
@@ -168,7 +175,12 @@ const MobileNav: FC<NavPropsType> = ({ user }) => (
             </DropdownMenuItem>
             {adminRoles.includes(user.role) ? (
               <DropdownMenuItem>
-                <Button render={<Link to="/admin" />}>Admin Panel</Button>
+                <Button
+                  nativeButton={false}
+                  render={<Link to="/admin" />}
+                >
+                  Admin Panel
+                </Button>
               </DropdownMenuItem>
             ) : null}
           </DropdownMenuGroup>
@@ -240,7 +252,10 @@ const DesktopNav: FC<NavPropsType> = ({ user }) => (
       ) : (
         <>
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="ghost" />}>
+            <DropdownMenuTrigger
+              nativeButton={false}
+              render={<Button variant="ghost" />}
+            >
               <Avatar
                 alt={user.name}
                 // TODO!
@@ -254,6 +269,7 @@ const DesktopNav: FC<NavPropsType> = ({ user }) => (
                 <DropdownMenuItem>{user.name}</DropdownMenuItem>
                 <DropdownMenuItem
                   className="w-full cursor-pointer"
+                  nativeButton={false}
                   render={<Link to="/" />}
                 >
                   <UserCircleIcon /> Profile
@@ -263,6 +279,7 @@ const DesktopNav: FC<NavPropsType> = ({ user }) => (
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   className="w-full"
+                  nativeButton={false}
                   render={
                     <Button
                       size="lg"
