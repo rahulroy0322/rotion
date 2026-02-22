@@ -12,7 +12,7 @@ type AvatarPropsType = {
 const Avatar: FC<AvatarPropsType> = ({ src, alt, className, ...props }) => (
   <Av
     {...props}
-    className={cn('size-8', className)}
+    className={cn('size-8 cursor-pointer', className)}
   >
     <AvatarImage
       alt={alt}
