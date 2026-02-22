@@ -254,6 +254,7 @@ const BlogFormHeader: FC<BlogFormHeaderPropsType> = ({
       title,
       slug,
       content,
+      status: status || 'draft',
     })
   }
 

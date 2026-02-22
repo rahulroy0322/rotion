@@ -1,6 +1,7 @@
 {
   "name": "rotion",
   "private": true,
+  "description": "Blog turbo repo",
   "scripts": {
     "build": "turbo run build",
     "check": "biome check",

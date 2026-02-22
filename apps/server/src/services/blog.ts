@@ -10,7 +10,13 @@ const getAllBlogs = (
     limit: 10,
     skip: 0,
   }
-) => Blog.find(filter).limit(limit).skip(skip)
+) =>
+  Blog.find(filter)
+    .sort({
+      updatedAt: 'desc',
+    })
+    .limit(limit)
+    .skip(skip)
 
 const findBlog = (filter: QueryFilter<BlogType>) =>
   Blog.findOne(filter as QueryFilter<BlogSchemaType>)
