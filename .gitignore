@@ -43,3 +43,4 @@ yarn-error.log*
 **lock**
 
 .idea
+routeTree.gen.ts
