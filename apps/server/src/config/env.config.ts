@@ -1,4 +1,11 @@
-import 'dotenv/config'
+import { config } from 'dotenv'
+
+config({
+  debug: true,
+  path: '../../.env',
+  quiet: false,
+})
+
 import { envSchema } from '../schemas/env.schema'
 import { formatZodError } from '../utils/zod'
 
