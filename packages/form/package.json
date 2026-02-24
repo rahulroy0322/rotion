@@ -6,7 +6,8 @@
     ".": "./src/main.tsx"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "build:prod": "tsc"
   },
   "devDependencies": {
     "@types/react": "^19.2.5",
