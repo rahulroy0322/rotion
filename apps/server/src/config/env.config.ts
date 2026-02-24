@@ -1,9 +1,9 @@
 import { config } from 'dotenv'
 
 config({
-  debug: true,
+  debug: false,
   path: '../../.env',
-  quiet: false,
+  quiet: true,
 })
 
 import { envSchema } from '../schemas/env.schema'
