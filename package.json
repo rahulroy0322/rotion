@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
+    "build:prod": "turbo run build:prod",
     "check": "biome check",
     "check:fix": "biome check --write",
     "dev": "turbo run dev",
-    "start": "turbo run start",
     "prepare": "husky"
   },
   "dependencies": {

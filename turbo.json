@@ -14,9 +14,10 @@
         "dist/**"
       ]
     },
-    "start": {
+    "build:prod": {
       "dependsOn": [
-        "^start"
+        "^build:prod",
+        "^build"
       ]
     },
     "dev": {
