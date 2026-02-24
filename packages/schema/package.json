@@ -6,8 +6,7 @@
     "./*": "./src/*.schema.ts"
   },
   "scripts": {
-    "build": "tsc",
-    "build:prod": "tsc"
+    "build": "tsc"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
